@@ -17,6 +17,7 @@
     "react-native-screens": "~4.26.0"
   },
   "devDependencies": {
+    "@react-native/jest-preset": "^0.86.3",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.2.2",
     "@types/sql.js": "^1.4.11",
