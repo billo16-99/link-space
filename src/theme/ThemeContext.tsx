@@ -30,7 +30,8 @@ function readStoredMode(): AppearanceMode {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const systemScheme = useColorScheme() ?? 'light';
+  const rawScheme = useColorScheme();
+  const systemScheme: 'dark' | 'light' = rawScheme === 'dark' ? 'dark' : 'light';
   const [mode, setModeState] = useState<AppearanceMode>(readStoredMode);
 
   const setMode = useCallback((next: AppearanceMode) => {

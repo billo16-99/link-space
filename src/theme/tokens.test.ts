@@ -24,13 +24,13 @@ describe('theme tokens', () => {
   });
 
   it('spacing values are all positive', () => {
-    for (const value of Object.values(spacing)) {
+    for (const value of Object.values(spacing) as number[]) {
       expect(value).toBeGreaterThan(0);
     }
   });
 
   it('radius values are all non-negative', () => {
-    for (const value of Object.values(radius)) {
+    for (const value of Object.values(radius) as number[]) {
       expect(value).toBeGreaterThanOrEqual(0);
     }
   });
