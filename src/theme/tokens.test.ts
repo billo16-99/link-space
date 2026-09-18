@@ -36,8 +36,8 @@ describe('theme tokens', () => {
   });
 
   it('type scale defines the required text styles', () => {
-    expect(type.title.fontSize).toBeGreaterThan(type.heading.fontSize);
-    expect(type.heading.fontSize).toBeGreaterThan(type.body.fontSize);
+    expect(type.title.fontSize ?? 0).toBeGreaterThan(type.heading.fontSize ?? 0);
+    expect(type.heading.fontSize ?? 0).toBeGreaterThan(type.body.fontSize ?? 0);
   });
 });
 
