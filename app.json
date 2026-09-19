@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Link Space",
+    "name": "LinkSpice",
     "slug": "link-space",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,6 +8,7 @@
     "scheme": "linkspace",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "owner": "abdul6122008",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.linkspace.app"
@@ -28,6 +29,12 @@
     "plugins": [
       "expo-router",
       "expo-sqlite"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f49ade8b-8029-4925-91c1-611dd01eaa42"
+      }
+    }
   }
 }
