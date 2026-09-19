@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 8: Theme &amp; Polish - How to Code LinkSpice</title>
+  <title>Chapter 8: Theme &amp; Polish - How to Code Link Space</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
@@ -19,7 +19,7 @@
   <div class="page-wrapper">
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h2>How to Code LinkSpice</h2>
+        <h2>How to Code Link Space</h2>
         <p>10 chapters to a working app</p>
       </div>
       <nav class="sidebar-nav">
@@ -40,7 +40,7 @@
       <div class="chapter-header">
         <span class="chapter-badge">Chapter 8</span>
         <h1>Theme &amp; Polish</h1>
-        <p class="subtitle">Add dark/light mode, responsive layouts, and smooth animations to make your app feel professional. This is where LinkSpice goes from "working" to "delightful."</p>
+        <p class="subtitle">Add dark/light mode, responsive layouts, and smooth animations to make your app feel professional. This is where Link Space goes from "working" to "delightful."</p>
       </div>
 
       <!-- ===== What You'll Learn ===== -->
@@ -59,7 +59,7 @@
       <!-- ===== Design Tokens ===== -->
       <section class="section" id="design-tokens">
         <h2>Design Tokens</h2>
-        <p>Before writing any component, LinkSpice defines all its visual values in one place: <code>tokens.ts</code>. This file contains every color, spacing value, border radius, and text style the app uses. Nothing is hardcoded in components — everything comes from tokens.</p>
+        <p>Before writing any component, Link Space defines all its visual values in one place: <code>tokens.ts</code>. This file contains every color, spacing value, border radius, and text style the app uses. Nothing is hardcoded in components — everything comes from tokens.</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -213,7 +213,7 @@ export const type: Record&lt;
       <!-- ===== ThemeContext ===== -->
       <section class="section" id="theme-context">
         <h2>ThemeContext — How the Theme Is Delivered</h2>
-        <p>React's Context API lets you pass data down through the component tree without prop-drilling. LinkSpice uses it to deliver the current theme (palette, mode, and a function to switch modes) to every component in the app.</p>
+        <p>React's Context API lets you pass data down through the component tree without prop-drilling. Link Space uses it to deliver the current theme (palette, mode, and a function to switch modes) to every component in the app.</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -367,14 +367,14 @@ export function ThemeToggle() {
 
         <div class="callout callout-why">
           <div class="callout-title">Why 'system' is an option</div>
-          <p>Most users expect their phone's global dark/light setting to carry through to apps. The <code>'system'</code> mode does exactly that — it follows whatever the phone is set to. This is the default in LinkSpice if no preference has been saved.</p>
+          <p>Most users expect their phone's global dark/light setting to carry through to apps. The <code>'system'</code> mode does exactly that — it follows whatever the phone is set to. This is the default in Link Space if no preference has been saved.</p>
         </div>
       </section>
 
       <!-- ===== Responsive Design ===== -->
       <section class="section" id="responsive-design">
         <h2>Responsive Design — useResponsive</h2>
-        <p>Phones come in many sizes. LinkSpice uses a custom hook called <code>useResponsive</code> that reads the screen dimensions and returns a set of pre-calculated values that adjust automatically for small, normal, and large phones.</p>
+        <p>Phones come in many sizes. Link Space uses a custom hook called <code>useResponsive</code> that reads the screen dimensions and returns a set of pre-calculated values that adjust automatically for small, normal, and large phones.</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -496,7 +496,7 @@ Animated.timing(scaleAnim, {
 }).start();</code></pre>
         </div>
 
-        <p><strong>Springs</strong> feel natural because they mimic real physics. <strong>Timing</strong> animations give you exact control over duration. LinkSpice uses both — springs for interactive motions (press feedback, panel slides) and timing for predictable transitions (fade in/out).</p>
+        <p><strong>Springs</strong> feel natural because they mimic real physics. <strong>Timing</strong> animations give you exact control over duration. Link Space uses both — springs for interactive motions (press feedback, panel slides) and timing for predictable transitions (fade in/out).</p>
 
         <div class="callout callout-why">
           <div class="callout-title">Why <code>useNativeDriver: true</code>?</div>
@@ -644,7 +644,7 @@ const saveCheckmark = useRef(new Animated.Value(0)).current;</code></pre>
       <!-- ===== Micro-Animations ===== -->
       <section class="section" id="micro-animations">
         <h2>Micro-Animations — The Small Touches</h2>
-        <p>The best apps have tiny animations that you barely notice but would miss if they were gone. LinkSpice has several of these:</p>
+        <p>The best apps have tiny animations that you barely notice but would miss if they were gone. Link Space has several of these:</p>
 
         <div class="step">
           <div class="step-num">1</div>

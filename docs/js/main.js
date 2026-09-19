@@ -1,5 +1,5 @@
 /* ============================================
-   How to Code LinkSpice - Main JavaScript
+   How to Code Link Space - Main JavaScript
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {

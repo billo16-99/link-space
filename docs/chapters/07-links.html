@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 7: Links Feature - How to Code LinkSpice</title>
+  <title>Chapter 7: Links Feature - How to Code Link Space</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
@@ -19,7 +19,7 @@
   <div class="page-wrapper">
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h2>How to Code LinkSpice</h2>
+        <h2>How to Code Link Space</h2>
         <p>10 chapters to a working app</p>
       </div>
       <nav class="sidebar-nav">
@@ -40,7 +40,7 @@
       <div class="chapter-header">
         <span class="chapter-badge">Chapter 7</span>
         <h1>Links Feature</h1>
-        <p class="subtitle">The heart of LinkSpice: adding, editing, deleting, pinning, and organizing links. See the real AddLinkPanel and LinkPreviewCard in action, then build your own "Add Link" form from scratch.</p>
+        <p class="subtitle">The heart of Link Space: adding, editing, deleting, pinning, and organizing links. See the real AddLinkPanel and LinkPreviewCard in action, then build your own "Add Link" form from scratch.</p>
       </div>
 
       <!-- ===== What You'll Learn ===== -->
@@ -48,7 +48,7 @@
         <h2>What You'll Learn</h2>
         <p>In this chapter, you'll understand:</p>
         <ul>
-          <li><strong>The core feature</strong> — how LinkSpice lets you add, edit, delete, and organize links</li>
+          <li><strong>The core feature</strong> — how Link Space lets you add, edit, delete, and organize links</li>
           <li><strong>The AddLinkPanel</strong> — a slide-up panel with URL input, metadata extraction, and a space picker</li>
           <li><strong>The LinkPreviewCard</strong> — how links display on screen with title, domain, and favicon</li>
           <li><strong>Editing links</strong> — updating title, tags, notes, and which space a link belongs to</li>
@@ -62,7 +62,7 @@
       <!-- ===== What is a Link ===== -->
       <section class="section" id="what-is-a-link">
         <h2>What is a Link?</h2>
-        <p>A link is the fundamental unit of data in LinkSpice. Every time you save a URL, the app creates a <strong>Link</strong> object — a record in the database that holds the URL, a title, a description, which space it belongs to, tags, and whether it's pinned.</p>
+        <p>A link is the fundamental unit of data in Link Space. Every time you save a URL, the app creates a <strong>Link</strong> object — a record in the database that holds the URL, a title, a description, which space it belongs to, tags, and whether it's pinned.</p>
 
         <p>Here is the Link type from the app's type definitions:</p>
 
@@ -101,7 +101,7 @@
 
         <div class="callout callout-why">
           <div class="callout-title">Why links are the core</div>
-          <p>Everything in LinkSpice revolves around links. Spaces group them, tags label them, pins highlight them. Understanding the Link type is the key to understanding the entire app.</p>
+          <p>Everything in Link Space revolves around links. Spaces group them, tags label them, pins highlight them. Understanding the Link type is the key to understanding the entire app.</p>
         </div>
       </section>
 
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
       <!-- ===== Deleting Links ===== -->
       <section class="section" id="deleting-links">
         <h2>Deleting Links</h2>
-        <p>Deleting a link removes it from the database permanently. LinkSpice shows a confirmation dialog before deleting — this prevents accidental data loss. Here's the repository function:</p>
+        <p>Deleting a link removes it from the database permanently. Link Space shows a confirmation dialog before deleting — this prevents accidental data loss. Here's the repository function:</p>
 
         <div class="code-block">
           <div class="code-block-header">

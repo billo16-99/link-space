@@ -56,7 +56,7 @@ export default function Welcome() {
   return (
     <View style={[styles.container, { backgroundColor: palette.background, paddingTop: insets.top + 40 }]}>
       <View style={styles.topSection}>
-        <Text style={[styles.wordmark, { color: palette.textPrimary }]}>LinkSpice</Text>
+        <Text style={[styles.wordmark, { color: palette.textPrimary }]}>Link Space</Text>
       </View>
 
       <View style={styles.visualArea}>

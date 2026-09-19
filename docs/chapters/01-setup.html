@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 1: Setup & Hello World - How to Code LinkSpice</title>
+  <title>Chapter 1: Setup & Hello World - How to Code Link Space</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
@@ -23,7 +23,7 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h2>How to Code LinkSpice</h2>
+        <h2>How to Code Link Space</h2>
         <p>10 chapters to a working app</p>
       </div>
       <nav class="sidebar-nav">
@@ -85,7 +85,7 @@
         <p>Expo is a set of tools built on top of React Native that makes everything easier. It handles all the complicated setup so you can focus on writing your app. Think of Expo as the easy mode for building mobile apps.</p>
 
         <h3>What you'll build</h3>
-        <p>By the end of all 10 chapters, you'll have a fully working app called <strong>LinkSpice</strong> on your phone. You'll be able to save links, organize them into spaces, switch between dark and light themes, and more. But right now, we're just going to get a simple "Hello World" message to show up on your phone. Let's go!</p>
+        <p>By the end of all 10 chapters, you'll have a fully working app called <strong>Link Space</strong> on your phone. You'll be able to save links, organize them into spaces, switch between dark and light themes, and more. But right now, we're just going to get a simple "Hello World" message to show up on your phone. Let's go!</p>
 
         <div class="callout callout-why">
           <div class="callout-title">&#9889; Why this matters</div>
@@ -262,22 +262,22 @@
             <span class="code-block-filename">Terminal</span>
             <button class="copy-btn">&#128203; Copy</button>
           </div>
-          <pre><code class="language-bash">npx create-expo-app@latest LinkSpice
-cd LinkSpice
+          <pre><code class="language-bash">npx create-expo-app@latest Link Space
+cd Link Space
 npm start</code></pre>
         </div>
 
         <p>Let's break down what each command does:</p>
 
         <ul>
-          <li><strong><code>npx create-expo-app@latest LinkSpice</code></strong> &mdash; This downloads and runs the Expo project creator. It builds a brand new project folder called "LinkSpice" with all the starter files you need. The <code>@latest</code> part means it always gets the newest version.</li>
-          <li><strong><code>cd LinkSpice</code></strong> &mdash; This moves you inside the LinkSpice folder. All your future commands should be run from inside this folder.</li>
+          <li><strong><code>npx create-expo-app@latest Link Space</code></strong> &mdash; This downloads and runs the Expo project creator. It builds a brand new project folder called "Link Space" with all the starter files you need. The <code>@latest</code> part means it always gets the newest version.</li>
+          <li><strong><code>cd Link Space</code></strong> &mdash; This moves you inside the Link Space folder. All your future commands should be run from inside this folder.</li>
           <li><strong><code>npm start</code></strong> &mdash; This starts the development server. It watches your code files and serves your app so it can be previewed on your phone. A big QR code should appear in your terminal.</li>
         </ul>
 
         <div class="callout callout-why">
           <div class="callout-title">&#9889; Why this matters</div>
-          <p>The <code>npm start</code> command is one you'll use constantly. Whenever you want to preview your app, open a terminal, go to your LinkSpice folder, and run <code>npm start</code>. It's like turning on the power to your workshop.</p>
+          <p>The <code>npm start</code> command is one you'll use constantly. Whenever you want to preview your app, open a terminal, go to your Link Space folder, and run <code>npm start</code>. It's like turning on the power to your workshop.</p>
         </div>
       </div>
 
@@ -319,7 +319,7 @@ npm start</code></pre>
       <!-- The Code -->
       <div class="section" id="app-code">
         <h2>Understanding the Code</h2>
-        <p>Let's look at the actual code that makes your app work. In VS Code, open your LinkSpice folder (File &rarr; Open Folder) and find the file called <code>App.js</code>. This is the main file of your app. Open it and you'll see something like this:</p>
+        <p>Let's look at the actual code that makes your app work. In VS Code, open your Link Space folder (File &rarr; Open Folder) and find the file called <code>App.js</code>. This is the main file of your app. Open it and you'll see something like this:</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -331,7 +331,7 @@ npm start</code></pre>
 export default function App() {
   return (
     &lt;View style={styles.container}&gt;
-      &lt;Text&gt;Hello LinkSpice!&lt;/Text&gt;
+      &lt;Text&gt;Hello Link Space!&lt;/Text&gt;
     &lt;/View&gt;
   );
 }
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
           <li><strong><code>import &#123; Text, View, StyleSheet &#125; from 'react-native';</code></strong> &mdash; This brings in tools we need. <code>Text</code> lets us display words on screen. <code>View</code> is like a container (like a box). <code>StyleSheet</code> lets us add styles like colors and sizes.</li>
           <li><strong><code>export default function App() &#123; &#125;</code></strong> &mdash; This defines our main component. A component is a piece of the app. Every React Native app is made of components. The <code>App</code> component is the root &mdash; it's the first thing that runs.</li>
           <li><strong><code>&lt;View style=&#123;styles.container&#125;&gt;</code></strong> &mdash; This creates a View (a box) that fills the whole screen. The <code>style</code> part applies our container styles.</li>
-          <li><strong><code>&lt;Text&gt;Hello LinkSpice!&lt;/Text&gt;</code></strong> &mdash; This displays the text "Hello LinkSpice!" on the screen. This is what you see on your phone right now.</li>
+          <li><strong><code>&lt;Text&gt;Hello Link Space!&lt;/Text&gt;</code></strong> &mdash; This displays the text "Hello Link Space!" on the screen. This is what you see on your phone right now.</li>
           <li><strong><code>const styles = StyleSheet.create(&#123; &#125;);</code></strong> &mdash; This defines the styles. <code>flex: 1</code> means "fill all available space." <code>alignItems: 'center'</code> centers horizontally. <code>justifyContent: 'center'</code> centers vertically.</li>
         </ul>
 
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
           <div class="step-num">1</div>
           <div class="step-content">
             <h4>Open App.js in VS Code</h4>
-            <p>In VS Code, open your LinkSpice folder if you haven't already. Find <code>App.js</code> in the file list on the left and click to open it.</p>
+            <p>In VS Code, open your Link Space folder if you haven't already. Find <code>App.js</code> in the file list on the left and click to open it.</p>
           </div>
         </div>
 
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
           <div class="step-num">2</div>
           <div class="step-content">
             <h4>Change the text</h4>
-            <p>Find the line that says <code>&lt;Text&gt;Hello LinkSpice!&lt;/Text&gt;</code>. Change it to your name:</p>
+            <p>Find the line that says <code>&lt;Text&gt;Hello Link Space!&lt;/Text&gt;</code>. Change it to your name:</p>
           </div>
         </div>
 
@@ -458,7 +458,7 @@ export default function App() {
   return (
     &lt;View style={styles.container}&gt;
       &lt;Text&gt;Hello, my name is Abdul!&lt;/Text&gt;
-      &lt;Text&gt;I'm learning to code with LinkSpice&lt;/Text&gt;
+      &lt;Text&gt;I'm learning to code with Link Space&lt;/Text&gt;
     &lt;/View&gt;
   );
 }

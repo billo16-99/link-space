@@ -30,7 +30,7 @@ export default function Splash() {
           </View>
         </View>
         <Animated.Text style={[styles.wordmark, { color: palette.textPrimary, opacity }]}>
-          LinkSpice
+          Link Space
         </Animated.Text>
       </Animated.View>
     </View>

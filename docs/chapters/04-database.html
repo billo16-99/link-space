@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 4: Database - How to Code LinkSpice</title>
+  <title>Chapter 4: Database - How to Code Link Space</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
@@ -19,7 +19,7 @@
   <div class="page-wrapper">
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h2>How to Code LinkSpice</h2>
+        <h2>How to Code Link Space</h2>
         <p>10 chapters to a working app</p>
       </div>
       <nav class="sidebar-nav">
@@ -41,7 +41,7 @@
       <div class="chapter-header">
         <span class="chapter-badge">Chapter 4</span>
         <h1>Database</h1>
-        <p class="subtitle">Learn how LinkSpice saves your data on your phone so it never disappears.</p>
+        <p class="subtitle">Learn how Link Space saves your data on your phone so it never disappears.</p>
       </div>
 
       <!-- ===== What You'll Learn ===== -->
@@ -50,10 +50,10 @@
         <p>In this chapter, you'll understand:</p>
         <ul>
           <li><strong>What a database is</strong> — a spreadsheet that lives on your phone</li>
-          <li><strong>SQLite</strong> — the type of database LinkSpice uses</li>
+          <li><strong>SQLite</strong> — the type of database Link Space uses</li>
           <li><strong>Schema</strong> — the blueprint that defines how data is organized</li>
           <li><strong>CRUD</strong> — the four operations: Create, Read, Update, Delete</li>
-          <li><strong>How LinkSpice connects it all</strong> — from schema to code to data on screen</li>
+          <li><strong>How Link Space connects it all</strong> — from schema to code to data on screen</li>
         </ul>
       </section>
 
@@ -71,7 +71,7 @@
           <li><strong>Rows</strong> — each individual entry (one saved link is one row)</li>
         </ul>
 
-        <p>Here's what LinkSpice's <code>links</code> table looks like:</p>
+        <p>Here's what Link Space's <code>links</code> table looks like:</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -95,8 +95,8 @@
 
       <!-- ===== SQLite ===== -->
       <section class="section" id="sqlite">
-        <h2>SQLite &mdash; The Database LinkSpice Uses</h2>
-        <p>LinkSpice uses <strong>SQLite</strong>, a lightweight database that runs right on the phone. No server needed, no internet required. The entire database lives in a single file on the device.</p>
+        <h2>SQLite &mdash; The Database Link Space Uses</h2>
+        <p>Link Space uses <strong>SQLite</strong>, a lightweight database that runs right on the phone. No server needed, no internet required. The entire database lives in a single file on the device.</p>
 
         <p>Why SQLite?</p>
         <ul>
@@ -114,7 +114,7 @@
         <h2>The Schema &mdash; Your Data Blueprint</h2>
         <p>Before you can store anything, you need to define <em>what</em> you're storing. That's what a <strong>schema</strong> does. It's the blueprint that tells the database: "Here are the tables, here are the columns, here's how they relate to each other."</p>
 
-        <p>LinkSpice has two tables: <code>spaces</code> and <code>links</code>. A space is a folder that holds links. Here's the actual schema:</p>
+        <p>Link Space has two tables: <code>spaces</code> and <code>links</code>. A space is a folder that holds links. Here's the actual schema:</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -216,7 +216,7 @@ export function migrate(db: DbClient): void {
       <!-- ===== db.ts / expo-client.ts ===== -->
       <section class="section" id="connection">
         <h2>Database Connection</h2>
-        <p>Before you can run queries, you need to connect to the database. LinkSpice splits this into three files that work together.</p>
+        <p>Before you can run queries, you need to connect to the database. Link Space splits this into three files that work together.</p>
 
         <h3>The Client Interface</h3>
         <p>This defines what every database client must be able to do:</p>
@@ -394,7 +394,7 @@ export function serializeTags(tags: string[]): string {
       <!-- ===== CRUD Operations ===== -->
       <section class="section" id="crud">
         <h2>CRUD Operations</h2>
-        <p>CRUD stands for the four things you can do with data: <strong>Create</strong>, <strong>Read</strong>, <strong>Update</strong>, and <strong>Delete</strong>. Every database operation falls into one of these categories. Let's look at how LinkSpice implements each one.</p>
+        <p>CRUD stands for the four things you can do with data: <strong>Create</strong>, <strong>Read</strong>, <strong>Update</strong>, and <strong>Delete</strong>. Every database operation falls into one of these categories. Let's look at how Link Space implements each one.</p>
 
         <h3>Create &mdash; Adding a new link</h3>
         <div class="code-block">
@@ -560,14 +560,14 @@ export function getLink(db: DbClient, id: string): Link | null {
 
         <div class="callout callout-why">
           <div class="callout-title">&#9889; Why this matters</div>
-          <p>Every database operation in LinkSpice follows this pattern: receive input, run SQL, return results. The repository layer keeps all database logic in one place, so the rest of the app never has to think about SQL.</p>
+          <p>Every database operation in Link Space follows this pattern: receive input, run SQL, return results. The repository layer keeps all database logic in one place, so the rest of the app never has to think about SQL.</p>
         </div>
       </section>
 
       <!-- ===== Building It ===== -->
       <section class="section" id="building-it">
         <h2>Building It &mdash; Step by Step</h2>
-        <p>Let's walk through how you'd create a simple database, add some data, and read it back. This mirrors what LinkSpice does behind the scenes.</p>
+        <p>Let's walk through how you'd create a simple database, add some data, and read it back. This mirrors what Link Space does behind the scenes.</p>
 
         <div class="step">
           <div class="step-num">1</div>
@@ -592,7 +592,7 @@ export function getLink(db: DbClient, id: string): Link | null {
             <p>You could run SQL directly to insert a link:</p>
             <div class="code-block">
               <div class="code-block-header">
-                <span class="code-block-filename">Direct SQL (what LinkSpice does internally)</span>
+                <span class="code-block-filename">Direct SQL (what Link Space does internally)</span>
                 <button class="copy-btn">&#128203; Copy</button>
               </div>
               <pre><code class="language-typescript">db.run(
@@ -663,7 +663,7 @@ export function getLink(db: DbClient, id: string): Link | null {
           <li>Know how <code>rows.ts</code> translates database data for JavaScript</li>
           <li>Identify the four files in <code>src/db/</code> and what each one does</li>
         </ul>
-        <p>Open the LinkSpice app and navigate between spaces &mdash; every screen you see is reading data from this database.</p>
+        <p>Open the Link Space app and navigate between spaces &mdash; every screen you see is reading data from this database.</p>
       </div>
 
       <!-- ===== Exercise ===== -->

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 5: Hooks &amp; State - How to Code LinkSpice</title>
+  <title>Chapter 5: Hooks &amp; State - How to Code Link Space</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
@@ -19,7 +19,7 @@
   <div class="page-wrapper">
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <h2>How to Code LinkSpice</h2>
+        <h2>How to Code Link Space</h2>
         <p>10 chapters to a working app</p>
       </div>
       <nav class="sidebar-nav">
@@ -40,7 +40,7 @@
       <div class="chapter-header">
         <span class="chapter-badge">Chapter 5</span>
         <h1>Hooks &amp; State</h1>
-        <p class="subtitle">Learn how React keeps your screens in sync with the database. useState, useEffect, custom hooks, and the data flow pattern that powers LinkSpice.</p>
+        <p class="subtitle">Learn how React keeps your screens in sync with the database. useState, useEffect, custom hooks, and the data flow pattern that powers Link Space.</p>
       </div>
 
       <!-- ===== What You'll Learn ===== -->
@@ -203,7 +203,7 @@ export function MyScreen() {
       <!-- ===== useSpaces hook ===== -->
       <section class="section" id="useSpaces-hook">
         <h2>The <code>useSpaces</code> Hook</h2>
-        <p>This is the real hook from the LinkSpice app. It reads all spaces from the database and keeps them updated automatically.</p>
+        <p>This is the real hook from the Link Space app. It reads all spaces from the database and keeps them updated automatically.</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -305,7 +305,7 @@ export function useLinksBySpace(spaceId: string | null): Link[] {
       <!-- ===== The Event System ===== -->
       <section class="section" id="event-system">
         <h2>The Event System</h2>
-        <p>LinkSpice uses a tiny event system to notify hooks when the database changes. It lives in one file and has only two functions.</p>
+        <p>Link Space uses a tiny event system to notify hooks when the database changes. It lives in one file and has only two functions.</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -359,7 +359,7 @@ export function notifyDbChanged(): void {
       <!-- ===== Data Flow ===== -->
       <section class="section" id="data-flow">
         <h2>Data Flow Pattern</h2>
-        <p>Every piece of data in LinkSpice follows the same path. Understanding this pattern means you understand the entire app.</p>
+        <p>Every piece of data in Link Space follows the same path. Understanding this pattern means you understand the entire app.</p>
 
         <div class="code-block">
           <div class="code-block-header">

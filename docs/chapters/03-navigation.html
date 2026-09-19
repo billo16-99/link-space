@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 3: Navigation - How to Code LinkSpice</title>
+  <title>Chapter 3: Navigation - How to Code Link Space</title>
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/prism.css">
   <script src="../js/prism.js"></script>
@@ -12,7 +12,7 @@
   <div class="page-wrapper">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h2>How to Code LinkSpice</h2>
+        <h2>How to Code Link Space</h2>
       </div>
       <nav class="sidebar-nav">
         <a href="01-setup.html" data-chapter="1">1. Setup</a>
@@ -43,9 +43,9 @@
 
       <div class="section">
         <h2>What You'll Learn</h2>
-        <p>In this chapter you will learn the basics of screen navigation in LinkSpice. Specifically:</p>
+        <p>In this chapter you will learn the basics of screen navigation in Link Space. Specifically:</p>
         <ul>
-          <li><strong>expo-router</strong> — the routing library LinkSpice uses to manage screens.</li>
+          <li><strong>expo-router</strong> — the routing library Link Space uses to manage screens.</li>
           <li><strong>File-based routing</strong> — how dropping a file into the app/ folder automatically creates a screen.</li>
           <li><strong>Stack navigation</strong> — how screens pile on top of each other, just like a deck of cards.</li>
         </ul>
@@ -61,7 +61,7 @@
           <p>You do not need to write a list of routes somewhere. If you create app/about.tsx, you automatically get a screen at /about. This is simple and hard to get wrong.</p>
         </div>
 
-        <p>Here is what a typical app/ folder looks like in LinkSpice:</p>
+        <p>Here is what a typical app/ folder looks like in Link Space:</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -83,7 +83,7 @@
         <h2>_layout.tsx Explanation</h2>
         <p>The root layout is the most important file in the entire app. It wraps <em>every</em> screen with the navigation stack, providers, and theme settings.</p>
 
-        <p>Here is the actual _layout.tsx from LinkSpice:</p>
+        <p>Here is the actual _layout.tsx from Link Space:</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -108,7 +108,7 @@ export default function RootLayout() {
           headerTintColor: Colors[colorScheme ?? "light"].text,
         }}
       &gt;
-        &lt;Stack.Screen name="index" options={{ title: "LinkSpice" }} /&gt;
+        &lt;Stack.Screen name="index" options={{ title: "Link Space" }} /&gt;
         &lt;Stack.Screen name="about" options={{ title: "About" }} /&gt;
         &lt;Stack.Screen name="profile/[id]" options={{ title: "Profile" }} /&gt;
       &lt;/Stack&gt;
@@ -158,7 +158,7 @@ export default function RootLayout() {
       </div>
       <div class="section">
         <h2>Navigating Between Screens</h2>
-        <p>LinkSpice uses the router object from expo-router to move between screens. There are three main methods you need to know:</p>
+        <p>Link Space uses the router object from expo-router to move between screens. There are three main methods you need to know:</p>
 
         <div class="step">
           <span class="step-num">1</span>
@@ -230,7 +230,7 @@ import { router } from "expo-router";
 export default function HomeScreen() {
   return (
     &lt;View style={styles.container}&gt;
-      &lt;Text style={styles.title}&gt;Welcome to LinkSpice&lt;/Text&gt;
+      &lt;Text style={styles.title}&gt;Welcome to Link Space&lt;/Text&gt;
       &lt;Text style={styles.subtitle}&gt;Your links. Your space.&lt;/Text&gt;
       &lt;View style={styles.buttons}&gt;
         &lt;Button
@@ -278,9 +278,9 @@ import { router } from "expo-router";
 export default function AboutScreen() {
   return (
     &lt;View style={styles.container}&gt;
-      &lt;Text style={styles.title}&gt;About LinkSpice&lt;/Text&gt;
+      &lt;Text style={styles.title}&gt;About Link Space&lt;/Text&gt;
       &lt;Text style={styles.body}&gt;
-        LinkSpice helps you collect and share your favorite links in one
+        Link Space helps you collect and share your favorite links in one
         beautiful space.
       &lt;/Text&gt;
       &lt;Button title="Go Back" onPress={() =&gt; router.back()} /&gt;
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
           <div class="verify-title">Verify</div>
           <p>Open the app on your phone and confirm these behaviours:</p>
           <ul>
-            <li>Home screen shows "Welcome to LinkSpice" with two buttons.</li>
+            <li>Home screen shows "Welcome to Link Space" with two buttons.</li>
             <li>Tapping "Go to About" slides to the About screen. The back arrow in the header returns you to Home.</li>
             <li>Tapping "Go to Profile" slides to the Profile screen showing "Viewing profile for user #1".</li>
             <li>Pressing the back button on Profile returns to Home.</li>

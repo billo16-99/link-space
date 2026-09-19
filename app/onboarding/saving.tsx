@@ -82,7 +82,7 @@ export default function Saving() {
           Save anything{'\n'}in seconds.
         </Text>
         <Text style={[styles.subtext, { color: palette.textSecondary }]}>
-          Share a link to LinkSpice whenever you want to save it.
+          Share a link to Link Space whenever you want to save it.
         </Text>
 
         <Pressable

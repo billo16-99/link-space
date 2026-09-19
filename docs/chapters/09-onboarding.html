@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chapter 9: Onboarding & Extras - How to Code LinkSpice</title>
+  <title>Chapter 9: Onboarding & Extras - How to Code Link Space</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
@@ -14,7 +14,7 @@
   <div class="page-wrapper">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h2>How to Code LinkSpice</h2>
+        <h2>How to Code Link Space</h2>
         <p>10 chapters to a working app</p>
       </div>
       <nav class="sidebar-nav">
@@ -56,7 +56,7 @@
       <div class="section">
         <h2>What is Onboarding?</h2>
         <p>Onboarding is the <strong>first thing a new user sees</strong> when they open your app. It introduces the app, explains what it does, and guides the user through setup.</p>
-        <p>LinkSpice has <strong>5 onboarding screens</strong>:</p>
+        <p>Link Space has <strong>5 onboarding screens</strong>:</p>
         <ol>
           <li><strong>Splash</strong> &mdash; Logo animation (1.5 seconds)</li>
           <li><strong>Welcome</strong> &mdash; Floating cards + "Get Started" button</li>
@@ -74,7 +74,7 @@
       <!-- Section 3 -->
       <div class="section">
         <h2>The Splash Screen</h2>
-        <p>The splash screen shows the LinkSpice logo with a scale+fade animation, then automatically navigates to the welcome screen after 1.5 seconds.</p>
+        <p>The splash screen shows the Link Space logo with a scale+fade animation, then automatically navigates to the welcome screen after 1.5 seconds.</p>
 
         <div class="code-block">
           <div class="code-block-header">
@@ -129,7 +129,7 @@ export default function Splash() {
         &lt;Animated.Text style={[styles.wordmark, {
           color: palette.textPrimary, opacity
         }]}&gt;
-          LinkSpice
+          Link Space
         &lt;/Animated.Text&gt;
       &lt;/Animated.View&gt;
     &lt;/View&gt;
@@ -265,7 +265,7 @@ export function setOnboardingCompleted(v: boolean) {
       <!-- Section 6 -->
       <div class="section">
         <h2>The Saving Demo Screen</h2>
-        <p>This screen shows an animated visualization of how LinkSpice works: a link card moves into a space box, then a checkmark appears.</p>
+        <p>This screen shows an animated visualization of how Link Space works: a link card moves into a space box, then a checkmark appears.</p>
 
         <div class="code-block">
           <div class="code-block-header">
