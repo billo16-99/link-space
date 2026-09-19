@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 5: Hooks &amp; State - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+  <button class="mobile-toggle" id="mobile-toggle">&#9776;</button>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width: 50%"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1"><span class="num">01</span>Setup &amp; Hello World</a>
+        <a href="02-structure.html" data-chapter="2"><span class="num">02</span>Project Structure</a>
+        <a href="03-navigation.html" data-chapter="3"><span class="num">03</span>Navigation</a>
+        <a href="04-database.html" data-chapter="4"><span class="num">04</span>Database</a>
+        <a href="05-hooks.html" class="active" data-chapter="5"><span class="num">05</span>Hooks &amp; State</a>
+        <a href="06-components.html" data-chapter="6"><span class="num">06</span>Components</a>
+        <a href="07-links.html" data-chapter="7"><span class="num">07</span>Links Feature</a>
+        <a href="08-theme.html" data-chapter="8"><span class="num">08</span>Theme &amp; Polish</a>
+        <a href="09-onboarding.html" data-chapter="9"><span class="num">09</span>Onboarding &amp; Extras</a>
+        <a href="10-build.html" data-chapter="10"><span class="num">10</span>Build &amp; Deploy</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="chapter-header">
+        <span class="chapter-badge">Chapter 5</span>
+        <h1>Hooks &amp; State</h1>
+        <p class="subtitle">Learn how React keeps your screens in sync with the database. useState, useEffect, custom hooks, and the data flow pattern that powers LinkSpice.</p>
+      </div>
+
+      <!-- ===== What You'll Learn ===== -->
+      <section class="section" id="what-youll-learn">
+        <h2>What You'll Learn</h2>
+        <p>In this chapter, you'll understand:</p>
+        <ul>
+          <li><strong>React state</strong> — how components remember things</li>
+          <li><strong>useState</strong> — the hook that stores data inside a component</li>
+          <li><strong>useEffect</strong> — the hook that runs code when something changes</li>
+          <li><strong>Custom hooks</strong> — reusable bundles of logic you write yourself</li>
+          <li><strong>Data flow</strong> — how data moves from the database to your screen</li>
+        </ul>
+      </section>
+
+      <!-- ===== What is State ===== -->
+      <section class="section" id="what-is-state">
+        <h2>What is State?</h2>
+        <p><strong>State</strong> is a variable inside a component that React watches. When state changes, React re-renders the screen — it redraws the UI with the new value.</p>
+        <p>Think of state like a whiteboard in a classroom. The teacher writes a number on it. Everyone sees the number. When the teacher erases it and writes a new number, everyone sees the new one. State works the same way — it holds a value, and when it changes, the screen updates.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">useState example</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useState } from 'react';
+import { Text, Button, View } from 'react-native';
+
+export function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;You clicked {count} times&lt;/Text&gt;
+      &lt;Button title="Add 1" onPress={() =&gt; setCount(count + 1)} /&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p>Here is what happens step by step:</p>
+        <ol>
+          <li><code>useState(0)</code> creates a variable called <code>count</code> with the starting value <code>0</code></li>
+          <li><code>setCount</code> is a function that changes the value of <code>count</code></li>
+          <li>When the user taps "Add 1", <code>setCount(count + 1)</code> runs</li>
+          <li>React sees the state changed, so it redraws the screen with the new number</li>
+        </ol>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why does <code>setCount</code> trigger a redraw?</div>
+          <p>React compares the old state with the new state. If they are different, it re-renders the component. This is how the screen stays in sync with your data.</p>
+        </div>
+      </section>
+
+      <!-- ===== What is useEffect ===== -->
+      <section class="section" id="what-is-useeffect">
+        <h2>What is useEffect?</h2>
+        <p><strong>useEffect</strong> runs code after the component renders. You use it to do things that are not part of rendering — like fetching data, subscribing to events, or setting up timers.</p>
+        <p>Think of it like a doorbell. You set it up once, and it rings whenever someone presses the button. You do not ring it yourself — it reacts to external events.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">useEffect example</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
+
+export function Timer() {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() =&gt; {
+    const interval = setInterval(() =&gt; {
+      setSeconds(prev =&gt; prev + 1);
+    }, 1000);
+
+    return () =&gt; clearInterval(interval);
+  }, []);
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Timer: {seconds}s&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p>The <code>useEffect</code> call has two parts:</p>
+        <ol>
+          <li><strong>The function</strong> — what to do. Here it starts a timer that adds 1 every second.</li>
+          <li><strong>The empty array <code>[]</code></strong> — when to do it. An empty array means "run this only once, when the component first appears."</li>
+        </ol>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">The cleanup function</div>
+          <p>The <code>return () =&gt; clearInterval(interval)</code> part is cleanup. It runs when the component disappears (like when the user leaves the screen). It stops the timer so it does not keep running in the background.</p>
+        </div>
+
+        <p>You can also watch specific values. If you put a variable in the array, the effect runs again whenever that variable changes:</p>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">useEffect with a dependency</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">useEffect(() =&gt; {
+  console.log('spaceId changed to:', spaceId);
+  // fetch new data...
+}, [spaceId]); // runs when spaceId changes</code></pre>
+        </div>
+      </section>
+
+      <!-- ===== Custom Hooks ===== -->
+      <section class="section" id="custom-hooks">
+        <h2>Custom Hooks</h2>
+        <p>A <strong>custom hook</strong> is a function you write that uses other hooks inside it. It lets you bundle up logic so you can reuse it across many components.</p>
+        <p>Think of a custom hook like a recipe. You write it once, and anyone can follow it. Instead of rewriting the same code in every component, you put it in a custom hook and call it from anywhere.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Custom hook example</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useState } from 'react';
+
+function useCounter(start: number) {
+  const [count, setCount] = useState(start);
+
+  function increment() {
+    setCount(prev =&gt; prev + 1);
+  }
+
+  function reset() {
+    setCount(start);
+  }
+
+  return { count, increment, reset };
+}
+
+// Now any component can use it:
+export function MyScreen() {
+  const { count, increment, reset } = useCounter(0);
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Count: {count}&lt;/Text&gt;
+      &lt;Button title="Add" onPress={increment} /&gt;
+      &lt;Button title="Reset" onPress={reset} /&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why custom hooks?</div>
+          <p>Without custom hooks, every component that needs to read from the database would repeat the same useState + useEffect code. With custom hooks, you write that logic once and every component gets it for free.</p>
+        </div>
+      </section>
+
+      <!-- ===== useSpaces hook ===== -->
+      <section class="section" id="useSpaces-hook">
+        <h2>The <code>useSpaces</code> Hook</h2>
+        <p>This is the real hook from the LinkSpice app. It reads all spaces from the database and keeps them updated automatically.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/hooks/useSpaces.ts (simplified)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useEffect, useState } from 'react';
+import { getDbClient } from '../db/db';
+import { listSpaces } from '../repositories/spaces';
+import { subscribeToDbChanges } from '../store/events';
+import type { Space } from '../types';
+
+export function useSpaces(): Space[] {
+  const [spaces, setSpaces] = useState&lt;Space[]&gt;(
+    () =&gt; listSpaces(getDbClient())
+  );
+
+  useEffect(
+    () =&gt;
+      subscribeToDbChanges(() =&gt;
+        setSpaces(listSpaces(getDbClient()))
+      ),
+    []
+  );
+
+  return spaces;
+}</code></pre>
+        </div>
+
+        <p>Line by line:</p>
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <strong><code>const [spaces, setSpaces] = useState&lt;Space[]&gt;(...)</code></strong> — Creates state that holds an array of spaces. The initial value comes from <code>listSpaces()</code>, which reads directly from the database. The <code>() =&gt;</code> form is called a lazy initializer — React only runs it once on the first render.
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <strong><code>useEffect(() =&gt; subscribeToDbChanges(...), [])</code></strong> — Subscribes to the event system. Whenever something in the database changes (a space is added, edited, or deleted), the callback runs and re-reads all spaces from the database, updating state.
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <strong><code>return spaces</code></strong> — Returns the current list of spaces. Any component that calls <code>useSpaces()</code> gets the array, and it updates automatically when the database changes.
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Why the empty array <code>[]</code>?</div>
+          <p>The empty array means "subscribe once when the component appears, and never re-subscribe." The subscription stays active forever — we just want to set it up a single time.</p>
+        </div>
+      </section>
+
+      <!-- ===== useLinks hook ===== -->
+      <section class="section" id="useLinks-hook">
+        <h2>The <code>useLinks</code> Hook</h2>
+        <p>This hook reads all links belonging to a specific space. It follows the exact same pattern as <code>useSpaces</code>.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/hooks/useLinks.ts (simplified)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useEffect, useState } from 'react';
+import { getDbClient } from '../db/db';
+import { listBySpace } from '../repositories/links';
+import { subscribeToDbChanges } from '../store/events';
+import type { Link } from '../types';
+
+export function useLinksBySpace(spaceId: string | null): Link[] {
+  const [links, setLinks] = useState&lt;Link[]&gt;(
+    () =&gt; listBySpace(getDbClient(), spaceId)
+  );
+
+  useEffect(
+    () =&gt;
+      subscribeToDbChanges(() =&gt;
+        setLinks(listBySpace(getDbClient(), spaceId))
+      ),
+    [spaceId]
+  );
+
+  return links;
+}</code></pre>
+        </div>
+
+        <p>The only difference from <code>useSpaces</code>: the dependency array has <code>[spaceId]</code> instead of <code>[]</code>. This means if the user navigates to a different space, the effect re-subscribes with the new space ID.</p>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">Why does <code>[spaceId]</code> matter?</div>
+          <p>If you used <code>[]</code> here, the hook would always show links for the first space the user opened, even after they navigate to a different one. The dependency array tells React: "re-run this when <code>spaceId</code> changes."</p>
+        </div>
+      </section>
+
+      <!-- ===== The Event System ===== -->
+      <section class="section" id="event-system">
+        <h2>The Event System</h2>
+        <p>LinkSpice uses a tiny event system to notify hooks when the database changes. It lives in one file and has only two functions.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/store/events.ts</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">type Listener = () =&gt; void;
+
+const listeners = new Set&lt;Listener&gt;();
+
+export function subscribeToDbChanges(listener: Listener): () =&gt; void {
+  listeners.add(listener);
+  return () =&gt; {
+    listeners.delete(listener);
+  };
+}
+
+export function notifyDbChanged(): void {
+  listeners.forEach((listener) =&gt; listener());
+}</code></pre>
+        </div>
+
+        <p>How it works:</p>
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <strong><code>listeners</code></strong> — A <code>Set</code> that holds all the functions waiting for database changes. Think of it like a mailing list.
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <strong><code>subscribeToDbChanges(listener)</code></strong> — Adds a function to the list. Returns a cleanup function that removes it (so hooks can unsubscribe when they unmount).
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <strong><code>notifyDbChanged()</code></strong> — Calls every listener in the list. This is what triggers hooks to re-read data from the database.
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Where does <code>notifyDbChanged</code> get called?</div>
+          <p>Inside the action hooks like <code>useAddSpace</code>, <code>useDeleteLink</code>, etc. After writing to the database, they call <code>notifyDbChanged()</code> to tell all hooks "hey, data changed, re-read it."</p>
+        </div>
+      </section>
+
+      <!-- ===== Data Flow ===== -->
+      <section class="section" id="data-flow">
+        <h2>Data Flow Pattern</h2>
+        <p>Every piece of data in LinkSpice follows the same path. Understanding this pattern means you understand the entire app.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">The data flow</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-text">Database (SQLite)
+    ↓
+Repository (reads/writes SQL)
+    ↓
+Hook (useState + useEffect + subscribeToDbChanges)
+    ↓
+Component (displays the data as UI)</code></pre>
+        </div>
+
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <strong>Database</strong> — The raw data lives here. Tables with rows and columns.
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <strong>Repository</strong> — SQL queries that read or write to the database. Returns plain objects (like <code>Space</code> or <code>Link</code>).
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <strong>Hook</strong> — Calls the repository to get data, stores it in state, and subscribes to changes so it stays fresh.
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <strong>Component</strong> — Calls the hook, gets the data, and renders it as UI. When the hook updates, the component re-renders automatically.
+          </div>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why not let components talk to the database directly?</div>
+          <p>Separation of concerns. The component does not need to know SQL. The repository does not need to know React. The hook is the glue. If you switch databases someday, you only change the repository — the components and hooks stay the same.</p>
+        </div>
+      </section>
+
+      <!-- ===== Building It ===== -->
+      <section class="section" id="building-it">
+        <h2>Building It</h2>
+        <p>Let's put this into practice with two exercises: a simple counter, then a list that reads from the database.</p>
+
+        <h3>Step 1: A Simple Counter</h3>
+        <p>This teaches you how <code>useState</code> and <code>useEffect</code> work together.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Counter.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useState, useEffect } from 'react';
+import { Text, Button, View, StyleSheet } from 'react-native';
+
+export function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() =&gt; {
+    console.log('Count is now:', count);
+  }, [count]);
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.number}&gt;{count}&lt;/Text&gt;
+      &lt;Button title="Add 1" onPress={() =&gt; setCount(c =&gt; c + 1)} /&gt;
+      &lt;Button title="Reset" onPress={() =&gt; setCount(0)} /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  number: { fontSize: 48, marginBottom: 16 },
+});</code></pre>
+        </div>
+
+        <p>When you run this, tapping "Add 1" changes the state, which triggers the <code>useEffect</code> (you'll see logs in the console), and React redraws the screen with the new number.</p>
+
+        <h3>Step 2: A List from the Database</h3>
+        <p>This is what the real app does — read data from the database using a hook.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">SpaceList.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { View, Text, StyleSheet } from 'react-native';
+import { useSpaces } from '../src/hooks/useSpaces';
+
+export function SpaceList() {
+  const spaces = useSpaces();
+
+  if (spaces.length === 0) {
+    return &lt;Text&gt;No spaces yet. Create one!&lt;/Text&gt;;
+  }
+
+  return (
+    &lt;View&gt;
+      {spaces.map(space =&gt; (
+        &lt;View key={space.id} style={styles.card}&gt;
+          &lt;Text style={styles.name}&gt;{space.name}&lt;/Text&gt;
+        &lt;/View&gt;
+      ))}
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    padding: 16,
+    marginVertical: 4,
+    backgroundColor: '#1a1a1e',
+    borderRadius: 8,
+  },
+  name: { color: '#e4e4e7', fontSize: 16 },
+});</code></pre>
+        </div>
+
+        <p>Notice how clean the component is. It calls <code>useSpaces()</code>, gets an array, and maps over it. No SQL, no database imports, no event subscriptions — all of that is handled by the hook.</p>
+      </section>
+
+      <!-- ===== Verify ===== -->
+      <div class="verify">
+        <div class="verify-title">Verify it works</div>
+        <p>Before moving on, make sure you can confirm:</p>
+        <ul>
+          <li>Screen shows data from the database (spaces or links appear on the screen)</li>
+          <li>Data updates when you add a new item (no restart needed — the screen refreshes automatically)</li>
+          <li>The console logs change when state updates</li>
+        </ul>
+      </div>
+
+      <!-- ===== Exercise ===== -->
+      <div class="exercise">
+        <div class="exercise-title">Try it yourself — create a <code>useSettings</code> hook</div>
+        <p>Follow the same pattern to create a hook that reads a single setting from the database:</p>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/hooks/useSettings.ts</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useEffect, useState } from 'react';
+import { getDbClient } from '../db/db';
+import { getSetting } from '../repositories/settings';
+import { subscribeToDbChanges } from '../store/events';
+
+export function useSettings(key: string): string | null {
+  const [value, setValue] = useState&lt;string | null&gt;(
+    () =&gt; getSetting(getDbClient(), key)
+  );
+
+  useEffect(
+    () =&gt;
+      subscribeToDbChanges(() =&gt;
+        setValue(getSetting(getDbClient(), key))
+      ),
+    [key]
+  );
+
+  return value;
+}</code></pre>
+        </div>
+        <ol>
+          <li>Look at this hook — does it follow the same pattern as <code>useSpaces</code>?</li>
+          <li>What would happen if you removed the <code>[key]</code> dependency from the array?</li>
+          <li>Create a component that calls <code>useSettings('theme')</code> and displays the value</li>
+        </ol>
+      </div>
+
+      <!-- ===== Navigation ===== -->
+      <nav class="chapter-nav">
+        <a href="04-database.html">
+          <span class="nav-label">Previous</span>
+          <span class="nav-title">Chapter 4 — Database</span>
+        </a>
+        <a href="06-components.html" class="next">
+          <span class="nav-label">Next</span>
+          <span class="nav-title">Chapter 6 — Components</span>
+        </a>
+      </nav>
+
+      <button id="mark-complete" data-chapter="5" class="copy-btn" style="margin-top:24px;padding:12px 24px;font-size:14px;">Mark Chapter Complete</button>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

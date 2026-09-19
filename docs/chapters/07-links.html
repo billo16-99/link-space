@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 7: Links Feature - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+  <button class="mobile-toggle" id="mobile-toggle">&#9776;</button>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width: 70%"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1"><span class="num">01</span>Setup &amp; Hello World</a>
+        <a href="02-structure.html" data-chapter="2"><span class="num">02</span>Project Structure</a>
+        <a href="03-navigation.html" data-chapter="3"><span class="num">03</span>Navigation</a>
+        <a href="04-database.html" data-chapter="4"><span class="num">04</span>Database</a>
+        <a href="05-hooks.html" data-chapter="5"><span class="num">05</span>Hooks &amp; State</a>
+        <a href="06-components.html" data-chapter="6"><span class="num">06</span>Components</a>
+        <a href="07-links.html" class="active" data-chapter="7"><span class="num">07</span>Links Feature</a>
+        <a href="08-theme.html" data-chapter="8"><span class="num">08</span>Theme &amp; Polish</a>
+        <a href="09-onboarding.html" data-chapter="9"><span class="num">09</span>Onboarding &amp; Extras</a>
+        <a href="10-build.html" data-chapter="10"><span class="num">10</span>Build &amp; Deploy</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="chapter-header">
+        <span class="chapter-badge">Chapter 7</span>
+        <h1>Links Feature</h1>
+        <p class="subtitle">The heart of LinkSpice: adding, editing, deleting, pinning, and organizing links. See the real AddLinkPanel and LinkPreviewCard in action, then build your own "Add Link" form from scratch.</p>
+      </div>
+
+      <!-- ===== What You'll Learn ===== -->
+      <section class="section" id="what-youll-learn">
+        <h2>What You'll Learn</h2>
+        <p>In this chapter, you'll understand:</p>
+        <ul>
+          <li><strong>The core feature</strong> — how LinkSpice lets you add, edit, delete, and organize links</li>
+          <li><strong>The AddLinkPanel</strong> — a slide-up panel with URL input, metadata extraction, and a space picker</li>
+          <li><strong>The LinkPreviewCard</strong> — how links display on screen with title, domain, and favicon</li>
+          <li><strong>Editing links</strong> — updating title, tags, notes, and which space a link belongs to</li>
+          <li><strong>Deleting links</strong> — removing a link with a confirmation dialog</li>
+          <li><strong>Pinning links</strong> — toggling <code>isPinned</code> so important links stay at the top</li>
+          <li><strong>Moving links</strong> — dragging or reassigning a link from one space to another</li>
+          <li><strong>Building a form</strong> — creating your own "Add Link" form step by step</li>
+        </ul>
+      </section>
+
+      <!-- ===== What is a Link ===== -->
+      <section class="section" id="what-is-a-link">
+        <h2>What is a Link?</h2>
+        <p>A link is the fundamental unit of data in LinkSpice. Every time you save a URL, the app creates a <strong>Link</strong> object — a record in the database that holds the URL, a title, a description, which space it belongs to, tags, and whether it's pinned.</p>
+
+        <p>Here is the Link type from the app's type definitions:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/types.ts</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export interface Link {
+  id: string;
+  spaceId: string | null;
+  url: string;
+  title: string;
+  description: string | null;
+  domain: string;
+  favicon: string | null;
+  thumbnail: string | null;
+  tags: string[];
+  isPinned: boolean;
+  createdAt: number;
+  updatedAt: number;
+}</code></pre>
+        </div>
+
+        <p>Each field has a purpose:</p>
+        <ul>
+          <li><strong><code>id</code></strong> — a unique identifier generated when the link is created</li>
+          <li><strong><code>spaceId</code></strong> — which space this link belongs to (<code>null</code> means it's unorganized)</li>
+          <li><strong><code>url</code></strong> — the normalized URL the user saved</li>
+          <li><strong><code>title</code></strong> — the page title, either extracted from the website or written by the user</li>
+          <li><strong><code>domain</code></strong> — the website name (like <code>github.com</code>)</li>
+          <li><strong><code>favicon</code></strong> and <strong><code>thumbnail</code></strong> — small image and preview image from the site</li>
+          <li><strong><code>tags</code></strong> — labels the user adds for organization</li>
+          <li><strong><code>isPinned</code></strong> — whether this link is marked as important</li>
+        </ul>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why links are the core</div>
+          <p>Everything in LinkSpice revolves around links. Spaces group them, tags label them, pins highlight them. Understanding the Link type is the key to understanding the entire app.</p>
+        </div>
+      </section>
+
+      <!-- ===== The AddLinkPanel ===== -->
+      <section class="section" id="addlink-panel">
+        <h2>The AddLinkPanel</h2>
+        <p>The AddLinkPanel is a slide-up sheet that lets users save a new link. It handles URL input, validates the link, fetches metadata from the web, lets you pick a space, add tags and notes, and save to the database. Here's the real code:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/AddLinkPanel.tsx (simplified)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  Easing,
+  KeyboardAvoidingView,
+  PanResponder,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../theme/ThemeContext';
+import { useResponsive } from '../hooks/useResponsive';
+import { normalizeUrl, isValidUrl } from '../lib/url';
+import { fetchMetadata, type LinkMetadata } from '../lib/metadata';
+import { useDuplicateCheck, useSaveLink } from '../hooks/useLinks';
+import { useSpaces } from '../hooks/useSpaces';
+
+interface AddLinkPanelProps {
+  expanded: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+  initialSpaceId?: string | null;
+}
+
+export function AddLinkPanel({ expanded, onOpen, onClose, initialSpaceId }: AddLinkPanelProps) {
+  const { palette } = useTheme();
+  const r = useResponsive();
+  const insets = useSafeAreaInsets();
+  const spaces = useSpaces();
+  const saveLink = useSaveLink();
+  const findDup = useDuplicateCheck();
+
+  const [url, setUrl] = useState('');
+  const [title, setTitle] = useState('');
+  const [spaceId, setSpaceId] = useState&lt;string | null&gt;(initialSpaceId ?? null);
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
+  const [preview, setPreview] = useState&lt;LinkMetadata | null&gt;(null);
+  const [urlStatus, setUrlStatus] = useState&lt;'idle' | 'valid' | 'invalid' | 'duplicate'&gt;('idle');
+
+  // ... animation refs, panResponder, effects ...
+
+  // The save button handler
+  async function onSave() {
+    if (!canSave) return;
+    const n = normalizeUrl(url.trim());
+    if (!n) return;
+    setLoading(true);
+    const m = preview ?? (await fetchMetadata(n));
+    saveLink({
+      url: n,
+      title: title.trim() || undefined,
+      spaceId,
+      favicon: m?.favicon ?? null,
+      thumbnail: m?.thumbnail ?? null,
+    });
+    setLoading(false);
+    // show saved checkmark, then close
+  }
+
+  // The URL input box
+  &lt;View style={styles.urlBox}&gt;
+    &lt;Ionicons name="link" size={18} color={palette.textSecondary} /&gt;
+    &lt;TextInput
+      value={url}
+      onChangeText={onUrlChange}
+      placeholder="Paste a link..."
+      keyboardType="url"
+      autoCapitalize="none"
+    /&gt;
+    &lt;Pressable onPress={onPaste}&gt;
+      &lt;Ionicons name="clipboard-outline" size={18} color={palette.accent} /&gt;
+    &lt;/Pressable&gt;
+  &lt;/View&gt;
+}</code></pre>
+        </div>
+
+        <p>Let's break down the key parts:</p>
+        <ul>
+          <li><strong><code>expanded</code></strong> — controls whether the panel is visible. When <code>false</code>, the panel shows a floating "Add Link" button (the FAB). When <code>true</code>, the panel slides up from the bottom.</li>
+          <li><strong><code>onUrlChange</code></strong> — called every time the user types or pastes a URL. It validates the URL and triggers metadata fetching.</li>
+          <li><strong><code>fetchMetadata</code></strong> — goes to the URL, downloads the HTML, and extracts the title, description, favicon, and thumbnail using Open Graph meta tags.</li>
+          <li><strong><code>findDup</code></strong> — checks if this URL has already been saved. If so, it shows a "duplicate" warning.</li>
+          <li><strong><code>onSave</code></strong> — the final step: normalizes the URL, fetches metadata if needed, and calls <code>saveLink</code> to write to the database.</li>
+        </ul>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">The slide-up pattern</div>
+          <p>The panel uses <code>Animated.Value</code> for a smooth slide-up animation. The user can also swipe down to dismiss it using <code>PanResponder</code>. This is a common pattern for mobile modals — a full-screen sheet that slides from the bottom.</p>
+        </div>
+      </section>
+
+      <!-- ===== Saving a Link ===== -->
+      <section class="section" id="saving-a-link">
+        <h2>Saving a Link — The Full Flow</h2>
+        <p>When a user saves a link, here's what happens step by step:</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>User pastes a URL</h4>
+            <p>The user types or pastes a URL into the input field. <code>onUrlChange</code> is called, which validates the URL format with <code>isValidUrl()</code>.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>URL is validated and checked for duplicates</h4>
+            <p><code>normalizeUrl()</code> cleans up the URL (adds <code>https://</code> if missing, strips trailing slashes). Then <code>findDup()</code> checks the database — if this URL already exists, the user sees a "duplicate" warning.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Metadata is fetched from the web</h4>
+            <p><code>fetchMetadata()</code> fetches the page HTML and extracts the title, description, favicon, and thumbnail image using Open Graph meta tags (<code>og:title</code>, <code>og:image</code>). This happens asynchronously, so a loading skeleton shows while waiting.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>User picks a space and optional details</h4>
+            <p>The user selects which space to save the link into, and optionally adds a custom title, tags, and notes.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>Link is saved to the database</h4>
+            <p><code>saveLink()</code> calls <code>createLink()</code> in the repository, which inserts a new row into the <code>links</code> table. Then <code>notifyDbChanged()</code> triggers all subscribed hooks to re-render.</p>
+          </div>
+        </div>
+
+        <p>Here's the repository function that actually writes to the database:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function createLink(db: DbClient, input: CreateLinkInput): Link {
+  const now = Date.now();
+  const url = input.url.trim();
+  const link: Link = {
+    id: newId(),
+    spaceId: input.spaceId ?? null,
+    url,
+    title: displayTitle(url, input.title ?? null),
+    description: input.description ?? null,
+    domain: input.domain ?? getDomain(url),
+    favicon: input.favicon ?? null,
+    thumbnail: input.thumbnail ?? null,
+    tags: input.tags ?? [],
+    isPinned: input.isPinned ?? false,
+    createdAt: input.createdAt ?? now,
+    updatedAt: now,
+  };
+
+  db.run(
+    `INSERT INTO links
+       (id, space_id, url, title, description, domain, favicon, thumbnail, tags, is_pinned, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      link.id, link.spaceId, link.url, link.title,
+      link.description, link.domain, link.favicon, link.thumbnail,
+      serializeTags(link.tags), link.isPinned ? 1 : 0,
+      link.createdAt, link.updatedAt,
+    ]
+  );
+  return link;
+}</code></pre>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why <code>notifyDbChanged()</code> matters</div>
+          <p>After writing to the database, <code>notifyDbChanged()</code> fires an event that all hooks listen to. This is how <code>useLinksBySpace()</code> knows to re-fetch and show the new link on screen — without this, the UI would be out of sync with the database.</p>
+        </div>
+      </section>
+
+      <!-- ===== LinkPreviewCard ===== -->
+      <section class="section" id="linkpreviewcard">
+        <h2>The LinkPreviewCard</h2>
+        <p>Every saved link is displayed using the LinkPreviewCard component. It shows a thumbnail image (or brand logo, or fallback), the link title, and the domain name. Here's the actual code from the app:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/LinkPreviewCard.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
+import { brandFor } from '../lib/brand';
+import { getDomain } from '../lib/url';
+import { useResponsive } from '../hooks/useResponsive';
+import type { Link } from '../types';
+
+const FALLBACK_IMAGES = [
+  require('../../assets/images/sunflower-robot.png'),
+  require('../../assets/images/fantom-logo.png'),
+];
+
+interface LinkPreviewCardProps {
+  link: Link;
+  onPress?: () =&gt; void;
+}
+
+export function LinkPreviewCard({ link, onPress }: LinkPreviewCardProps) {
+  const { palette } = useTheme();
+  const r = useResponsive();
+  const brand = brandFor(link.url);
+  const domain = link.domain || getDomain(link.url);
+  const hasImage = link.thumbnail?.startsWith('http') || link.favicon?.startsWith('http');
+  const fallbackImage = FALLBACK_IMAGES[Math.abs(link.id.charCodeAt(0)) % FALLBACK_IMAGES.length];
+
+  const cardH = r.width &lt; 360 ? 120 : r.width &lt; 412 ? 130 : 140;
+  const imgSize = cardH - 24;
+  const pad = r.width &lt; 360 ? 12 : 14;
+
+  return (
+    &lt;Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) =&gt; [
+        styles.card,
+        {
+          height: cardH,
+          borderRadius: r.width &lt; 360 ? 14 : 16,
+          padding: pad,
+          backgroundColor: palette.surface,
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+        },
+      ]}
+    &gt;
+      &lt;View style={[styles.imageWrap, {
+        width: imgSize, height: imgSize,
+        borderRadius: r.width &lt; 360 ? 10 : 12,
+        backgroundColor: brand?.bg ?? palette.surfaceRaised
+      }]}&gt;
+        {hasImage ? (
+          &lt;Image
+            source={{ uri: (link.thumbnail || link.favicon) ?? undefined }}
+            style={[styles.image, { borderRadius: r.width &lt; 360 ? 10 : 12 }]}
+          /&gt;
+        ) : brand ? (
+          &lt;Text style={[styles.brandLabel, {
+            color: brand.fg,
+            fontSize: Math.round(imgSize * 0.5)
+          }]}&gt;
+            {brand.label}
+          &lt;/Text&gt;
+        ) : (
+          &lt;Image source={fallbackImage}
+            style={[styles.image, { borderRadius: r.width &lt; 360 ? 10 : 12 }]}
+          /&gt;
+        )}
+      &lt;/View&gt;
+
+      &lt;View style={styles.info}&gt;
+        &lt;Text style={[styles.title, { color: palette.textPrimary }]}
+          numberOfLines={2}&gt;
+          {link.title || domain}
+        &lt;/Text&gt;
+        &lt;Text style={[styles.domain, { color: palette.textSecondary }]}
+          numberOfLines={1}&gt;
+          {domain}
+        &lt;/Text&gt;
+      &lt;/View&gt;
+    &lt;/Pressable&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  imageWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  brandLabel: {
+    fontWeight: '700',
+  },
+  info: {
+    flex: 1,
+    gap: 4,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: -0.2,
+  },
+  domain: {
+    fontSize: 13,
+    fontWeight: '400',
+  },
+});</code></pre>
+        </div>
+
+        <p>This component handles three different image scenarios:</p>
+        <ul>
+          <li><strong>Has a thumbnail URL</strong> — shows the actual image from the web (the <code>og:image</code> from the page)</li>
+          <li><strong>Has a known brand</strong> — shows the brand's label and color (like a GitHub or YouTube logo) using <code>brandFor()</code></li>
+          <li><strong>Neither</strong> — falls back to a local placeholder image</li>
+        </ul>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Responsive card height</div>
+          <p><code>cardH</code> changes based on screen width: 120px on small phones, 130px on medium, 140px on larger. This is the same responsive pattern used in SpaceCard — one size doesn't fit all phones.</p>
+        </div>
+      </section>
+
+      <!-- ===== Editing Links ===== -->
+      <section class="section" id="editing-links">
+        <h2>Editing Links</h2>
+        <p>When a user taps the edit action on a link, the app navigates to an edit screen or opens a sheet. The user can change the title, move the link to a different space, add or remove tags, and update the notes. Here's the repository function that handles updates:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts — updateLink</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function updateLink(
+  db: DbClient,
+  id: string,
+  patch: UpdateLinkInput
+): Link | null {
+  const existing = selectLink(db, id);
+  if (!existing) {
+    return null;
+  }
+
+  const next: Link = {
+    ...existing,
+    title: patch.title !== undefined
+      ? patch.title.trim() || existing.title
+      : existing.title,
+    spaceId: patch.spaceId !== undefined ? patch.spaceId : existing.spaceId,
+    description:
+      patch.description !== undefined ? patch.description : existing.description,
+    thumbnail: patch.thumbnail !== undefined ? patch.thumbnail : existing.thumbnail,
+    tags: patch.tags !== undefined ? patch.tags : existing.tags,
+    updatedAt: Date.now(),
+  };
+
+  db.run(
+    `UPDATE links
+       SET title = ?, space_id = ?, description = ?, thumbnail = ?, tags = ?, updated_at = ?
+     WHERE id = ?`,
+    [next.title, next.spaceId, next.description, next.thumbnail,
+     serializeTags(next.tags), next.updatedAt, id]
+  );
+  return next;
+}</code></pre>
+        </div>
+
+        <p>The pattern here is a <strong>patch</strong> — you only pass the fields you want to change. The function merges the patch with the existing link data, sets <code>updatedAt</code> to the current time, and writes it back to the database.</p>
+
+        <p>The hook that calls this is straightforward:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/hooks/useLinks.ts — useUpdateLink</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function useUpdateLink(): (id: string, patch: UpdateLinkInput) => Link | null {
+  return (id, patch) => {
+    const updated = updateLink(getDbClient(), id, patch);
+    notifyDbChanged();
+    return updated;
+  };
+}</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Why <code>patch.title.trim() || existing.title</code>?</div>
+          <p>If the user clears the title, we fall back to the existing title. This prevents empty titles. The <code>||</code> operator means "use the left side if it's truthy, otherwise use the right side."</p>
+        </div>
+      </section>
+
+      <!-- ===== Deleting Links ===== -->
+      <section class="section" id="deleting-links">
+        <h2>Deleting Links</h2>
+        <p>Deleting a link removes it from the database permanently. LinkSpice shows a confirmation dialog before deleting — this prevents accidental data loss. Here's the repository function:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts — deleteLink</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function deleteLink(db: DbClient, id: string): void {
+  db.run('DELETE FROM links WHERE id = ?', [id]);
+}</code></pre>
+        </div>
+
+        <p>And the hook that calls it:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/hooks/useLinks.ts — useDeleteLink</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function useDeleteLink(): (id: string) => void {
+  return (id) => {
+    deleteLink(getDbClient(), id);
+    notifyDbChanged();
+  };
+}</code></pre>
+        </div>
+
+        <p>In the UI, the delete action is triggered from a menu sheet or long-press. The app shows a confirmation dialog asking "Delete this link?" before actually calling the function. This is a best practice — destructive actions should always require confirmation.</p>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">No undo for deletes</div>
+          <p>Once a link is deleted, it's gone from the database. There's no "undo" button. That's why the confirmation dialog is important — it's the last chance to change your mind.</p>
+        </div>
+      </section>
+
+      <!-- ===== Pinning Links ===== -->
+      <section class="section" id="pinning-links">
+        <h2>Pinning Links</h2>
+        <p>Pinning a link marks it as important. Pinned links appear in a special panel at the top of the home screen, separate from the space they belong to. Here's the repository function:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts — setPinned</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function setPinned(db: DbClient, id: string, isPinned: boolean): void {
+  db.run('UPDATE links SET is_pinned = ?, updated_at = ? WHERE id = ?', [
+    isPinned ? 1 : 0,
+    Date.now(),
+    id,
+  ]);
+}</code></pre>
+        </div>
+
+        <p>And the hook:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/hooks/useLinks.ts — usePinLink</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function usePinLink(): (id: string, isPinned: boolean) => void {
+  return (id, isPinned) => {
+    setPinned(getDbClient(), id, isPinned);
+    notifyDbChanged();
+  };
+}</code></pre>
+        </div>
+
+        <p>The pinned links are displayed using the <code>DynamicIsland</code> component on the home screen. The repository also has a function to list all pinned links:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts — listPinned</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function listPinned(db: DbClient): Link[] {
+  const rows = db.all(
+    `SELECT ${CURRENTLY_SELECTED_COLUMNS} FROM links
+     WHERE is_pinned = 1 ORDER BY created_at DESC`
+  );
+  return rows.map((row) => mapLinkRow(row as never));
+}</code></pre>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why pinning matters</div>
+          <p>Pinning lets users surface their most important links without moving them out of their current space. A link can live in "Work Resources" but also be pinned to appear at the top of the home screen for quick access.</p>
+        </div>
+      </section>
+
+      <!-- ===== Moving Links ===== -->
+      <section class="section" id="moving-links">
+        <h2>Moving Links Between Spaces</h2>
+        <p>Users can move a link from one space to another. This simply updates the <code>spaceId</code> field in the database — the link itself doesn't change. Here's the repository function:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts — moveLink</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function moveLink(db: DbClient, id: string, spaceId: string | null): void {
+  db.run('UPDATE links SET space_id = ?, updated_at = ? WHERE id = ?', [
+    spaceId,
+    Date.now(),
+    id,
+  ]);
+}</code></pre>
+        </div>
+
+        <p>And the hook:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/hooks/useLinks.ts — useMoveLink</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function useMoveLink(): (id: string, spaceId: string | null) => void {
+  return (id, spaceId) => {
+    moveLink(getDbClient(), id, spaceId);
+    notifyDbChanged();
+  };
+}</code></pre>
+        </div>
+
+        <p>Setting <code>spaceId</code> to <code>null</code> moves the link to "Recent Links" (the unorganized collection). This is how users can reorganize links without re-saving them.</p>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Move vs. re-save</div>
+          <p>Moving a link is a lightweight operation — it just changes one field. Re-saving would create a duplicate. Always prefer <code>moveLink()</code> over creating a new link when reorganizing.</p>
+        </div>
+      </section>
+
+      <!-- ===== Building It ===== -->
+      <section class="section" id="building-it">
+        <h2>Building It — Your Own "Add Link" Form</h2>
+        <p>Now let's build a simplified version of the AddLinkPanel. This won't have all the animations and metadata fetching, but it will teach you the core flow: accept a URL, validate it, pick a space, and save it.</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Create the file</h4>
+            <p>Inside <code>src/components/</code>, create a new file called <code>AddLinkForm.tsx</code>.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Import dependencies</h4>
+            <p>You'll need React hooks, React Native components, the theme, the URL helpers, and the hooks for saving links and listing spaces.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Build the component</h4>
+            <p>Write the full component with a URL input, space picker, and save button.</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/AddLinkForm.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useState } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
+import { normalizeUrl, isValidUrl } from '../lib/url';
+import { useSaveLink } from '../hooks/useLinks';
+import { useSpaces } from '../hooks/useSpaces';
+
+interface AddLinkFormProps {
+  spaceId?: string | null;
+  onSaved?: () =&gt; void;
+}
+
+export function AddLinkForm({ spaceId, onSaved }: AddLinkFormProps) {
+  const { palette } = useTheme();
+  const spaces = useSpaces();
+  const saveLink = useSaveLink();
+
+  const [url, setUrl] = useState('');
+  const [title, setTitle] = useState('');
+  const [selectedSpaceId, setSelectedSpaceId] = useState&lt;string | null&gt;(spaceId ?? null);
+  const [error, setError] = useState('');
+  const [saved, setSaved] = useState(false);
+
+  function handleSave() {
+    setError('');
+    const trimmed = url.trim();
+
+    if (!trimmed) {
+      setError('Please enter a URL');
+      return;
+    }
+
+    const normalized = normalizeUrl(trimmed);
+    if (!normalized) {
+      setError('Not a valid URL');
+      return;
+    }
+
+    saveLink({
+      url: normalized,
+      title: title.trim() || undefined,
+      spaceId: selectedSpaceId,
+    });
+
+    setSaved(true);
+    setUrl('');
+    setTitle('');
+
+    setTimeout(() =&gt; {
+      setSaved(false);
+      onSaved?.();
+    }, 1000);
+  }
+
+  return (
+    &lt;View style={[styles.container, { backgroundColor: palette.surface }]}&gt;
+      &lt;Text style={[styles.label, { color: palette.textSecondary }]}&gt;URL&lt;/Text&gt;
+      &lt;TextInput
+        value={url}
+        onChangeText={(t) =&gt; { setUrl(t); setError(''); }}
+        placeholder="https://example.com"
+        placeholderTextColor={palette.textPlaceholder}
+        style={[styles.input, { backgroundColor: palette.surfaceRaised, color: palette.textPrimary }]}
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="url"
+      /&gt;
+
+      {error ? (
+        &lt;Text style={styles.error}&gt;{error}&lt;/Text&gt;
+      ) : null}
+
+      &lt;Text style={[styles.label, { color: palette.textSecondary }]}&gt;Title (optional)&lt;/Text&gt;
+      &lt;TextInput
+        value={title}
+        onChangeText={setTitle}
+        placeholder="Page title"
+        placeholderTextColor={palette.textPlaceholder}
+        style={[styles.input, { backgroundColor: palette.surfaceRaised, color: palette.textPrimary }]}
+      /&gt;
+
+      &lt;Text style={[styles.label, { color: palette.textSecondary }]}&gt;Space&lt;/Text&gt;
+      &lt;View style={styles.spaceRow}&gt;
+        {spaces.map((sp) =&gt; (
+          &lt;Pressable
+            key={sp.id}
+            onPress={() =&gt; setSelectedSpaceId(sp.id)}
+            style={[
+              styles.spaceChip,
+              {
+                backgroundColor: sp.id === selectedSpaceId
+                  ? palette.accent
+                  : palette.surfaceRaised,
+              },
+            ]}
+          &gt;
+            &lt;Text style={{ color: sp.id === selectedSpaceId ? '#fff' : palette.textPrimary, fontSize: 13 }}&gt;
+              {sp.name}
+            &lt;/Text&gt;
+          &lt;/Pressable&gt;
+        ))}
+      &lt;/View&gt;
+
+      &lt;Pressable
+        onPress={handleSave}
+        disabled={saved}
+        style={[
+          styles.saveBtn,
+          { backgroundColor: saved ? '#27C76F' : palette.accent },
+        ]}
+      &gt;
+        &lt;Text style={styles.saveBtnText}&gt;
+          {saved ? 'Saved!' : 'Save Link'}
+        &lt;/Text&gt;
+      &lt;/Pressable&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    borderRadius: 16,
+    gap: 12,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  input: {
+    height: 46,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    fontSize: 15,
+  },
+  error: {
+    fontSize: 13,
+    color: '#FF5C68',
+  },
+  spaceRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  spaceChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  saveBtn: {
+    height: 48,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  saveBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Use it in a screen</h4>
+            <p>Import and render it in any screen:</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Usage</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { AddLinkForm } from '../components/AddLinkForm';
+import { Screen } from '../components/Screen';
+
+export default function SaveScreen() {
+  return (
+    &lt;Screen&gt;
+      &lt;AddLinkForm spaceId="space-1" onSaved={() =&gt; console.log('Link saved!')} /&gt;
+    &lt;/Screen&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Compare with the real AddLinkPanel</div>
+          <p>This simplified form is missing the animations, metadata fetching, duplicate checking, and the slide-up behavior. The real AddLinkPanel has all of those — but the core logic (validate URL → normalize → save to DB → notify) is exactly the same.</p>
+        </div>
+      </section>
+
+      <!-- ===== Verify ===== -->
+      <div class="verify">
+        <div class="verify-title">Verify your understanding</div>
+        <p>Before moving on, make sure you can:</p>
+        <ul>
+          <li>Explain the full flow of saving a link: URL input → validation → metadata fetch → save to DB</li>
+          <li>Read the AddLinkPanel code and understand what each section does</li>
+          <li>Read the LinkPreviewCard code and explain how it handles three different image scenarios</li>
+          <li>Describe how editing, deleting, pinning, and moving links work at the database level</li>
+          <li>Build a simple "Add Link" form that accepts a URL, lets the user pick a space, and saves it</li>
+        </ul>
+      </div>
+
+      <!-- ===== Exercise ===== -->
+      <div class="exercise">
+        <div class="exercise-title">Try it yourself</div>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Extend the links feature with a "favorite" action.</p>
+        <ol>
+          <li><strong>Add an <code>isFavorite</code> field</strong> to the <code>Link</code> type in <code>src/types.ts</code>. It should be a <code>boolean</code>, defaulting to <code>false</code>.</li>
+          <li><strong>Add a database column</strong> — update the <code>links</code> table creation to include <code>is_favorite INTEGER DEFAULT 0</code>.</li>
+          <li><strong>Add a <code>setFavorite</code> function</strong> in <code>src/repositories/links.ts</code> — similar to <code>setPinned</code>, but for the <code>is_favorite</code> column.</li>
+          <li><strong>Create a hook</strong> <code>useFavoriteLink()</code> in <code>src/hooks/useLinks.ts</code> that calls <code>setFavorite</code> and notifies the DB.</li>
+          <li><strong>Add a heart icon</strong> to the LinkPreviewCard that toggles the favorite state when pressed.</li>
+          <li><strong>Bonus:</strong> Create a "Favorites" filter that shows only favorited links.</li>
+        </ol>
+      </div>
+
+      <!-- ===== Navigation ===== -->
+      <nav class="chapter-nav">
+        <a href="06-components.html">
+          <span class="nav-label">Previous</span>
+          <span class="nav-title">Chapter 6 — Components</span>
+        </a>
+        <a href="08-theme.html" class="next">
+          <span class="nav-label">Next</span>
+          <span class="nav-title">Chapter 8 — Theme &amp; Polish</span>
+        </a>
+      </nav>
+
+      <button id="mark-complete" data-chapter="7" class="copy-btn" style="margin-top:24px;padding:12px 24px;font-size:14px;">Mark Chapter Complete</button>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

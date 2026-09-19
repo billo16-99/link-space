@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 8: Theme &amp; Polish - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+  <button class="mobile-toggle" id="mobile-toggle">&#9776;</button>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width: 80%"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1"><span class="num">01</span>Setup &amp; Hello World</a>
+        <a href="02-structure.html" data-chapter="2"><span class="num">02</span>Project Structure</a>
+        <a href="03-navigation.html" data-chapter="3"><span class="num">03</span>Navigation</a>
+        <a href="04-database.html" data-chapter="4"><span class="num">04</span>Database</a>
+        <a href="05-hooks.html" data-chapter="5"><span class="num">05</span>Hooks &amp; State</a>
+        <a href="06-components.html" data-chapter="6"><span class="num">06</span>Components</a>
+        <a href="07-links.html" data-chapter="7"><span class="num">07</span>Links Feature</a>
+        <a href="08-theme.html" class="active" data-chapter="8"><span class="num">08</span>Theme &amp; Polish</a>
+        <a href="09-onboarding.html" data-chapter="9"><span class="num">09</span>Onboarding &amp; Extras</a>
+        <a href="10-build.html" data-chapter="10"><span class="num">10</span>Build &amp; Deploy</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="chapter-header">
+        <span class="chapter-badge">Chapter 8</span>
+        <h1>Theme &amp; Polish</h1>
+        <p class="subtitle">Add dark/light mode, responsive layouts, and smooth animations to make your app feel professional. This is where LinkSpice goes from "working" to "delightful."</p>
+      </div>
+
+      <!-- ===== What You'll Learn ===== -->
+      <section class="section" id="what-youll-learn">
+        <h2>What You'll Learn</h2>
+        <p>In this chapter, you'll understand:</p>
+        <ul>
+          <li><strong>Design tokens</strong> — a single source of truth for colors, spacing, and typography</li>
+          <li><strong>Dark/light mode</strong> — how ThemeProvider wraps the app and lets users switch themes</li>
+          <li><strong>Responsive design</strong> — adapting layouts for different screen sizes with useResponsive</li>
+          <li><strong>Animations</strong> — spring physics and the Animated API for smooth motion</li>
+          <li><strong>Micro-animations</strong> — the small touches (press scale, save checkmark) that make an app feel alive</li>
+        </ul>
+      </section>
+
+      <!-- ===== Design Tokens ===== -->
+      <section class="section" id="design-tokens">
+        <h2>Design Tokens</h2>
+        <p>Before writing any component, LinkSpice defines all its visual values in one place: <code>tokens.ts</code>. This file contains every color, spacing value, border radius, and text style the app uses. Nothing is hardcoded in components — everything comes from tokens.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/theme/tokens.ts</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import type { TextStyle } from 'react-native';
+
+export interface Palette {
+  background: string;
+  surface: string;
+  surfaceRaised: string;
+  border: string;
+  inputBackground: string;
+  textPrimary: string;
+  textSecondary: string;
+  textTertiary: string;
+  textPlaceholder: string;
+  accent: string;
+  accentSoft: string;
+  danger: string;
+  success: string;
+}
+
+export const palettes: Record&lt;'dark' | 'light', Palette&gt; = {
+  dark: {
+    background: '#000000',
+    surface: '#111113',
+    surfaceRaised: '#1A1A1E',
+    border: 'rgba(40,42,49,0.70)',
+    inputBackground: '#111113',
+    textPrimary: '#F4F4F5',
+    textSecondary: '#92959F',
+    textTertiary: '#656873',
+    textPlaceholder: '#777B87',
+    accent: '#A56BFF',
+    accentSoft: 'rgba(165,107,255,0.08)',
+    danger: '#FF5C68',
+    success: '#27C76F',
+  },
+  light: {
+    background: '#F7F7F8',
+    surface: '#FFFFFF',
+    surfaceRaised: '#FFFFFF',
+    border: '#E4E4EA',
+    inputBackground: '#EDEDF1',
+    textPrimary: '#111114',
+    textSecondary: '#6E6E78',
+    textTertiary: '#9B9BA6',
+    textPlaceholder: '#9B9BA6',
+    accent: '#7C5CFF',
+    accentSoft: 'rgba(124, 92, 255, 0.12)',
+    danger: '#E5484D',
+    success: '#1E9E66',
+  },
+};</code></pre>
+        </div>
+
+        <p>The same file also defines spacing, border radius, and typography tokens:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/theme/tokens.ts (continued)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xl2: 24,
+  xxl: 28,
+  xxl2: 32,
+} as const;
+
+export const radius = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  pill: 999,
+} as const;
+
+export const type: Record&lt;
+  'title' | 'heading' | 'body' | 'label' | 'caption'
+  | 'cardTitle' | 'subtitle' | 'count' | 'category'
+  | 'button' | 'searchPlaceholder',
+  TextStyle
+&gt; = {
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    lineHeight: 34,
+    letterSpacing: -0.4,
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: '700',
+    lineHeight: 26,
+    letterSpacing: -0.3,
+  },
+  body: {
+    fontSize: 15,
+    lineHeight: 21,
+  },
+  label: {
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  caption: {
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  cardTitle: {
+    fontSize: 19,
+    fontWeight: '600',
+    lineHeight: 24,
+    letterSpacing: -0.2,
+  },
+  subtitle: {
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  count: {
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  category: {
+    fontSize: 15,
+    fontWeight: '500',
+    lineHeight: 20,
+  },
+  button: {
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 22,
+  },
+  searchPlaceholder: {
+    fontSize: 16,
+    lineHeight: 22,
+  },
+};</code></pre>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why tokens matter</div>
+          <p>Without tokens, you'd scatter hex values like <code>#1A1A1E</code> throughout your components. If you later want to change the surface color, you'd have to find and replace it in dozens of files. With tokens, you change one value in <code>tokens.ts</code> and every component updates automatically.</p>
+        </div>
+      </section>
+
+      <!-- ===== ThemeContext ===== -->
+      <section class="section" id="theme-context">
+        <h2>ThemeContext — How the Theme Is Delivered</h2>
+        <p>React's Context API lets you pass data down through the component tree without prop-drilling. LinkSpice uses it to deliver the current theme (palette, mode, and a function to switch modes) to every component in the app.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/theme/ThemeContext.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useColorScheme } from 'react-native';
+import Storage from 'expo-sqlite/kv-store';
+
+import type { AppearanceMode } from '../types';
+import { palettes, resolveAppearance, type Palette } from './tokens';
+
+const MODE_KEY = 'appearance_mode';
+
+export interface ThemeContextValue {
+  mode: AppearanceMode;
+  setMode: (mode: AppearanceMode) =&gt; void;
+  resolvedMode: 'dark' | 'light';
+  palette: Palette;
+}
+
+const ThemeContext = createContext&lt;ThemeContextValue | null&gt;(null);
+
+function readStoredMode(): AppearanceMode {
+  try {
+    const raw = Storage.getItemSync(MODE_KEY);
+    if (raw === 'dark' || raw === 'light' || raw === 'system') {
+      return raw;
+    }
+  } catch {
+    // Storage not ready yet; fall back to dark.
+  }
+  return 'dark';
+}
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const rawScheme = useColorScheme();
+  const systemScheme: 'dark' | 'light' = rawScheme === 'dark' ? 'dark' : 'light';
+  const [mode, setModeState] = useState&lt;AppearanceMode&gt;(readStoredMode);
+
+  const setMode = useCallback((next: AppearanceMode) =&gt; {
+    setModeState(next);
+    try {
+      Storage.setItemSync(MODE_KEY, next);
+    } catch {
+      // Persisting the preference is best-effort.
+    }
+  }, []);
+
+  const value = useMemo&lt;ThemeContextValue&gt;(() =&gt; {
+    const resolvedMode = resolveAppearance(mode, systemScheme);
+    return {
+      mode,
+      setMode,
+      resolvedMode,
+      palette: palettes[resolvedMode],
+    };
+  }, [mode, systemScheme, setMode]);
+
+  return (
+    &lt;ThemeContext.Provider value={value}&gt;
+      {children}
+    &lt;/ThemeContext.Provider&gt;
+  );
+}
+
+export function useTheme(): ThemeContextValue {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return ctx;
+}</code></pre>
+        </div>
+
+        <p>Here's the flow, step by step:</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong><code>readStoredMode()</code></strong> — On app start, reads the user's saved preference from SQLite's key-value store. If nothing is saved, it defaults to <code>'dark'</code>.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong><code>useColorScheme()</code></strong> — A React Native hook that tells you whether the phone itself is in dark or light mode. This is the "system" setting.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong><code>resolveAppearance(mode, systemScheme)</code></strong> — If the user picked <code>'system'</code>, it uses the phone's setting. Otherwise it uses the user's explicit choice. Returns either <code>'dark'</code> or <code>'light'</code>.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong><code>palette: palettes[resolvedMode]</code></strong> — Looks up the right palette from the tokens file. If resolved mode is <code>'dark'</code>, you get the dark colors. If <code>'light'</code>, you get the light colors.
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">How components use it</div>
+          <p>Any component can call <code>const { palette } = useTheme()</code> and get the current colors. No prop drilling, no imports of palettes — just one hook call and the right colors appear.</p>
+        </div>
+      </section>
+
+      <!-- ===== Dark/Light Mode ===== -->
+      <section class="section" id="dark-light-mode">
+        <h2>Dark/Light Mode Switching</h2>
+        <p>The <code>setMode</code> function from <code>useTheme()</code> accepts three values: <code>'dark'</code>, <code>'light'</code>, or <code>'system'</code>. When a user taps a toggle, you call <code>setMode('light')</code> and every component in the app re-renders with the new palette.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Using setMode in a component</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { Pressable, Text, View } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+
+export function ThemeToggle() {
+  const { mode, setMode, resolvedMode } = useTheme();
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Current mode: {resolvedMode}&lt;/Text&gt;
+
+      &lt;Pressable onPress={() =&gt; setMode('dark')}&gt;
+        &lt;Text&gt;Dark&lt;/Text&gt;
+      &lt;/Pressable&gt;
+
+      &lt;Pressable onPress={() =&gt; setMode('light')}&gt;
+        &lt;Text&gt;Light&lt;/Text&gt;
+      &lt;/Pressable&gt;
+
+      &lt;Pressable onPress={() =&gt; setMode('system')}&gt;
+        &lt;Text&gt;System&lt;/Text&gt;
+      &lt;/Pressable&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p>The preference is persisted using <code>Storage.setItemSync(MODE_KEY, next)</code> — so the user's choice survives app restarts. On the next launch, <code>readStoredMode()</code> picks it back up.</p>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why 'system' is an option</div>
+          <p>Most users expect their phone's global dark/light setting to carry through to apps. The <code>'system'</code> mode does exactly that — it follows whatever the phone is set to. This is the default in LinkSpice if no preference has been saved.</p>
+        </div>
+      </section>
+
+      <!-- ===== Responsive Design ===== -->
+      <section class="section" id="responsive-design">
+        <h2>Responsive Design — useResponsive</h2>
+        <p>Phones come in many sizes. LinkSpice uses a custom hook called <code>useResponsive</code> that reads the screen dimensions and returns a set of pre-calculated values that adjust automatically for small, normal, and large phones.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/hooks/useResponsive.ts</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useWindowDimensions } from 'react-native';
+
+export function useResponsive() {
+  const { width, height } = useWindowDimensions();
+
+  const isSmall = width &lt; 360;
+  const isNormal = width >= 360 &amp;&amp; width &lt; 412;
+  const isLarge = width >= 412;
+
+  const columns: 1 | 2 = isSmall ? 1 : 2;
+
+  const iconSize = isSmall ? 18 : isNormal ? 20 : 22;
+  const headerIconSize = isSmall ? 20 : isNormal ? 24 : 28;
+
+  const tileSize = isSmall ? 36 : isNormal ? 42 : 48;
+
+  const pagePad = isSmall ? 16 : isNormal ? 20 : 24;
+
+  const columnGap = isSmall ? 10 : isNormal ? 14 : 16;
+  const rowGap = isSmall ? 12 : isNormal ? 16 : 18;
+
+  const searchHeight = isSmall ? 46 : isNormal ? 50 : 54;
+  const searchIconSize = isSmall ? 16 : isNormal ? 17 : 18;
+  const filterSize = isSmall ? 30 : isNormal ? 34 : 36;
+
+  const cardPadding = isSmall ? 16 : isNormal ? 18 : 22;
+  const cardRadius = isSmall ? 20 : isNormal ? 24 : 28;
+
+  const pillHeight = isSmall ? 32 : isNormal ? 36 : 40;
+  const pillDotSize = isSmall ? 8 : isNormal ? 9 : 10;
+
+  const fabWidth = isSmall ? 170 : isNormal ? 190 : 210;
+  const fabHeight = isSmall ? 50 : isNormal ? 54 : 58;
+  const fabIconCircle = isSmall ? 34 : isNormal ? 38 : 40;
+  const fabPlusSize = isSmall ? 20 : isNormal ? 22 : 24;
+  const fabTextSize = isSmall ? 15 : isNormal ? 16 : 17;
+
+  const sectionTitleSize = isSmall ? 22 : isNormal ? 25 : 27;
+  const cardTitleSize = isSmall ? 16 : isNormal ? 17 : 19;
+  const linkCountSize = isSmall ? 13 : isNormal ? 14 : 16;
+  const categorySize = isSmall ? 12 : isNormal ? 13 : 15;
+
+  return {
+    width, height, columns, iconSize, headerIconSize,
+    tileSize, pagePad, columnGap, rowGap, searchHeight,
+    searchIconSize, filterSize, cardPadding, cardRadius,
+    pillHeight, pillDotSize, fabWidth, fabHeight, fabIconCircle,
+    fabPlusSize, fabTextSize, sectionTitleSize, cardTitleSize,
+    linkCountSize, categorySize,
+  };
+}</code></pre>
+        </div>
+
+        <p>The hook divides phones into three buckets:</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Small (<code>&lt; 360px</code>)</strong> — Compact sizes for narrow phones. Uses 1-column layout for space cards.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Normal (<code>360–411px</code>)</strong> — The baseline. Most mid-range phones land here. Uses 2-column layout.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Large (<code>≥ 412px</code>)</strong> — Larger phones and tablets get more padding and bigger icons.
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">How components use it</div>
+          <p>Components call <code>const r = useResponsive()</code> and then use <code>r.pagePad</code>, <code>r.cardRadius</code>, etc. in their styles. The layout adapts automatically when the screen resizes — no manual breakpoint logic needed.</p>
+        </div>
+      </section>
+
+      <!-- ===== Animations ===== -->
+      <section class="section" id="animations">
+        <h2>Animations — The Animated API</h2>
+        <p>React Native's <code>Animated</code> API lets you create smooth animations without worrying about frame timing. You define a start value, an end value, and a "spring" or "timing" curve, and the library handles the in-between frames for you.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Animation basics</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useRef } from 'react';
+import { Animated, Easing } from 'react-native';
+
+// Create an animated value (starts at 0)
+const scaleAnim = useRef(new Animated.Value(1)).current;
+
+// Spring animation — natural, bouncy feel
+Animated.spring(scaleAnim, {
+  toValue: 0.95,        // shrink to 95%
+  useNativeDriver: true, // runs on UI thread for smoothness
+  damping: 18,           // how much bounce (lower = more bounce)
+  stiffness: 180,        // how fast it springs (higher = faster)
+}).start();
+
+// Timing animation — precise duration
+Animated.timing(scaleAnim, {
+  toValue: 1,
+  duration: 250,
+  easing: Easing.out(Easing.cubic), // ease-out curve
+  useNativeDriver: true,
+}).start();</code></pre>
+        </div>
+
+        <p><strong>Springs</strong> feel natural because they mimic real physics. <strong>Timing</strong> animations give you exact control over duration. LinkSpice uses both — springs for interactive motions (press feedback, panel slides) and timing for predictable transitions (fade in/out).</p>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why <code>useNativeDriver: true</code>?</div>
+          <p>This tells React Native to run the animation on the native UI thread instead of the JavaScript thread. The result: buttery-smooth 60fps animations even when JavaScript is busy doing other work. Always use this unless you're animating a property that the native driver doesn't support (like <code>backgroundColor</code>).</p>
+        </div>
+      </section>
+
+      <!-- ===== AddLinkPanel Animations ===== -->
+      <section class="section" id="addlinkpanel-animations">
+        <h2>Real Animation: AddLinkPanel</h2>
+        <p>The AddLinkPanel is the bottom sheet that slides up when you tap "Add Link." It uses several animated values working together to create a polished feel. Here's how the key animations are set up:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/AddLinkPanel.tsx (animation setup)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">const slideAnim = useRef(new Animated.Value(0)).current;
+const fadeAnim = useRef(new Animated.Value(0)).current;
+const swipeY = useRef(new Animated.Value(0)).current;
+const saveScale = useRef(new Animated.Value(1)).current;
+const saveCheckmark = useRef(new Animated.Value(0)).current;</code></pre>
+        </div>
+
+        <p>Each value controls a different piece of the animation:</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong><code>slideAnim</code></strong> — The panel's Y position. Starts off-screen (at <code>PANEL_H</code>) and springs to <code>0</code> (fully visible) when opened.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong><code>fadeAnim</code></strong> — The backdrop opacity. Fades from <code>0</code> to <code>1</code> when the panel opens, and back to <code>0</code> when it closes.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong><code>swipeY</code></strong> — Tracks the user's drag gesture. When they swipe down, this value follows their finger. If they swipe far enough, the panel closes.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong><code>saveScale</code></strong> — The save button's scale. Shrinks to <code>0.92</code> and bounces back to <code>1</code> when the link is saved.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong><code>saveCheckmark</code></strong> — The checkmark icon opacity. Fades in from <code>0</code> to <code>1</code> after saving.
+          </div>
+        </div>
+
+        <h3>Opening and Closing</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">AddLinkPanel.tsx (open/close animation)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">useEffect(() =&gt; {
+  if (expanded) {
+    slideAnim.setValue(PANEL_H);
+    fadeAnim.setValue(0);
+    swipeY.setValue(0);
+    Animated.parallel([
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        damping: 18,
+        stiffness: 180,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 250,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  } else {
+    Animated.parallel([
+      Animated.timing(slideAnim, {
+        toValue: PANEL_H,
+        duration: 280,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 180,
+        easing: Easing.in(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }
+}, [expanded]);</code></pre>
+        </div>
+
+        <p>Notice the pattern: <code>Animated.parallel()</code> runs multiple animations at the same time. The spring and timing finish together, creating a cohesive slide-up effect.</p>
+
+        <h3>Save Button Bounce</h3>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">AddLinkPanel.tsx (save animation)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">useEffect(() =&gt; {
+  if (saved) {
+    Animated.sequence([
+      Animated.spring(saveScale, {
+        toValue: 0.92,
+        useNativeDriver: true,
+        damping: 12,
+        stiffness: 300,
+      }),
+      Animated.spring(saveScale, {
+        toValue: 1,
+        useNativeDriver: true,
+        damping: 14,
+        stiffness: 200,
+      }),
+    ]).start();
+    Animated.timing(saveCheckmark, {
+      toValue: 1,
+      duration: 200,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }
+}, [saved]);</code></pre>
+        </div>
+
+        <p><code>Animated.sequence()</code> runs animations one after another. First the button shrinks, then it bounces back. Meanwhile, the checkmark fades in. This creates the satisfying "saved!" feedback.</p>
+      </section>
+
+      <!-- ===== Micro-Animations ===== -->
+      <section class="section" id="micro-animations">
+        <h2>Micro-Animations — The Small Touches</h2>
+        <p>The best apps have tiny animations that you barely notice but would miss if they were gone. LinkSpice has several of these:</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Card press scale</h4>
+            <p>Every card in the app shrinks slightly when pressed. This gives tactile feedback — the user feels like they're pushing a physical button.</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Pressable style function</span>
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+              </div>
+              <pre><code class="language-typescript">&lt;Pressable
+  onPress={onPress}
+  style={({ pressed }) =&gt; [
+    styles.card,
+    { transform: [{ scale: pressed ? 0.98 : 1 }] },
+  ]}
+&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Panel slide-up</h4>
+            <p>The AddLinkPanel doesn't just pop in. It slides up from the bottom with a spring curve while the backdrop fades in. This makes the transition feel physical, not digital.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Save button feedback</h4>
+            <p>When you save a link, the button shrinks and bounces back while a checkmark fades in. This tells the user "it worked" without showing a toast or alert.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Swipe to dismiss</h4>
+            <p>The AddLinkPanel can be swiped down to close. It tracks the finger in real-time, and if the user swipes far enough, it dismisses. Otherwise it springs back. This feels like handling a physical sheet of paper.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">The rule of micro-animations</div>
+          <p>Keep them under 300ms. Use spring physics (damping 12–20, stiffness 150–300). Always use <code>useNativeDriver: true</code>. The animation should feel like a natural extension of the interaction, not a showpiece.</p>
+        </div>
+      </section>
+
+      <!-- ===== Building It ===== -->
+      <section class="section" id="building-it">
+        <h2>Building It</h2>
+        <p>Let's put it all together. You'll add a theme toggle button and make a component animate on press.</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Create a theme toggle</h4>
+            <p>Add a simple component that lets the user switch between dark and light mode.</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/ThemeToggle.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
+
+export function ThemeToggle() {
+  const { resolvedMode, setMode } = useTheme();
+
+  return (
+    &lt;View style={styles.row}&gt;
+      &lt;Pressable
+        onPress={() =&gt; setMode('dark')}
+        style={({ pressed }) =&gt; [
+          styles.btn,
+          { opacity: pressed ? 0.7 : 1 },
+          resolvedMode === 'dark' &amp;&amp; styles.active,
+        ]}
+      &gt;
+        &lt;Ionicons name="moon" size={16} color={resolvedMode === 'dark' ? '#FFFFFF' : '#92959F'} /&gt;
+      &lt;/Pressable&gt;
+
+      &lt;Pressable
+        onPress={() =&gt; setMode('light')}
+        style={({ pressed }) =&gt; [
+          styles.btn,
+          { opacity: pressed ? 0.7 : 1 },
+          resolvedMode === 'light' &amp;&amp; styles.active,
+        ]}
+      &gt;
+        &lt;Ionicons name="sunny" size={16} color={resolvedMode === 'light' ? '#000000' : '#92959F'} /&gt;
+      &lt;/Pressable&gt;
+
+      &lt;Pressable
+        onPress={() =&gt; setMode('system')}
+        style={({ pressed }) =&gt; [
+          styles.btn,
+          { opacity: pressed ? 0.7 : 1 },
+        ]}
+      &gt;
+        &lt;Ionicons name="phone-portrait" size={16} color="#92959F" /&gt;
+      &lt;/Pressable&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  row: { flexDirection: 'row', gap: 8 },
+  btn: {
+    width: 36, height: 36, borderRadius: 18,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#1A1A1E',
+  },
+  active: { backgroundColor: '#A56BFF' },
+});</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Create an animated card</h4>
+            <p>Build a component that uses spring animations when pressed.</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/AnimatedCard.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useRef } from 'react';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+
+interface AnimatedCardProps {
+  title: string;
+  onPress?: () =&gt; void;
+}
+
+export function AnimatedCard({ title, onPress }: AnimatedCardProps) {
+  const { palette } = useTheme();
+  const scale = useRef(new Animated.Value(1)).current;
+
+  function onPressIn() {
+    Animated.spring(scale, {
+      toValue: 0.95,
+      useNativeDriver: true,
+      damping: 15,
+      stiffness: 400,
+    }).start();
+  }
+
+  function onPressOut() {
+    Animated.spring(scale, {
+      toValue: 1,
+      useNativeDriver: true,
+      damping: 15,
+      stiffness: 400,
+    }).start();
+  }
+
+  return (
+    &lt;Animated.View style={{ transform: [{ scale }] }}&gt;
+      &lt;Pressable
+        onPress={onPress}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
+        style={[styles.card, { backgroundColor: palette.surface }]}
+      &gt;
+        &lt;Text style={{ color: palette.textPrimary, fontSize: 16 }}&gt;
+          {title}
+        &lt;/Text&gt;
+      &lt;/Pressable&gt;
+    &lt;/Animated.View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  card: { padding: 20, borderRadius: 16 },
+});</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Use them together</h4>
+            <p>Import both components into a screen.</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Usage in a screen</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { ThemeToggle } from '../components/ThemeToggle';
+import { AnimatedCard } from '../components/AnimatedCard';
+
+export default function SettingsScreen() {
+  return (
+    &lt;Screen&gt;
+      &lt;ThemeToggle /&gt;
+      &lt;AnimatedCard title="Tap me!" onPress={() =&gt; console.log('pressed')} /&gt;
+    &lt;/Screen&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">What you should see</div>
+          <p>Tap the theme toggle — the entire screen switches colors instantly. Press the card — it springs down to 95% scale and bounces back when you release. These are the building blocks of a polished app.</p>
+        </div>
+      </section>
+
+      <!-- ===== Verify ===== -->
+      <div class="verify">
+        <div class="verify-title">Verify your understanding</div>
+        <p>Before moving on, make sure you can confirm:</p>
+        <ul>
+          <li>The app switches between dark and light mode when you tap the toggle</li>
+          <li>The preference is saved and persists when you close and reopen the app</li>
+          <li>Components adjust their sizes on different screen widths (test by resizing the simulator)</li>
+          <li>Press feedback (scale animation) works on cards and buttons</li>
+          <li>The AddLinkPanel slides up smoothly and can be swiped down to dismiss</li>
+        </ul>
+      </div>
+
+      <!-- ===== Exercise ===== -->
+      <div class="exercise">
+        <div class="exercise-title">Try it yourself — add a new color to the palette</div>
+        <p>Practice editing design tokens by adding a brand-new color to both themes.</p>
+        <ol>
+          <li><strong>Open <code>src/theme/tokens.ts</code></strong> and add a new property to the <code>Palette</code> interface called <code>warning</code> (type: <code>string</code>).</li>
+          <li><strong>Add the value to both palettes:</strong> <code>dark: '#FFB340'</code>, <code>light: '#E09520'</code>.</li>
+          <li><strong>Use it in a component</strong> — create a small banner that displays the warning color as its background.</li>
+          <li><strong>Bonus:</strong> Add a <code>warningSoft</code> color (a low-opacity version) for a subtle background tint.</li>
+        </ol>
+      </div>
+
+      <!-- ===== Navigation ===== -->
+      <nav class="chapter-nav">
+        <a href="07-links.html">
+          <span class="nav-label">Previous</span>
+          <span class="nav-title">Chapter 7 — Links Feature</span>
+        </a>
+        <a href="09-onboarding.html" class="next">
+          <span class="nav-label">Next</span>
+          <span class="nav-title">Chapter 9 — Onboarding &amp; Extras</span>
+        </a>
+      </nav>
+
+      <button id="mark-complete" data-chapter="8" class="copy-btn" style="margin-top:24px;padding:12px 24px;font-size:14px;">Mark Chapter Complete</button>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

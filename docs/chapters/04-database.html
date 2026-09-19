@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 4: Database - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+  <button class="mobile-toggle" id="mobile-toggle">&#9776;</button>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width: 40%"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1"><span class="num">01</span>Setup &amp; Hello World</a>
+        <a href="02-structure.html" data-chapter="2"><span class="num">02</span>Project Structure</a>
+        <a href="03-navigation.html" data-chapter="3"><span class="num">03</span>Navigation</a>
+        <a href="04-database.html" class="active" data-chapter="4"><span class="num">04</span>Database</a>
+        <a href="05-hooks.html" data-chapter="5"><span class="num">05</span>Hooks &amp; State</a>
+        <a href="06-components.html" data-chapter="6"><span class="num">06</span>Components</a>
+        <a href="07-links.html" data-chapter="7"><span class="num">07</span>Links Feature</a>
+        <a href="08-theme.html" data-chapter="8"><span class="num">08</span>Theme &amp; Polish</a>
+        <a href="09-onboarding.html" data-chapter="9"><span class="num">09</span>Onboarding &amp; Extras</a>
+        <a href="10-build.html" data-chapter="10"><span class="num">10</span>Build &amp; Deploy</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+
+      <div class="chapter-header">
+        <span class="chapter-badge">Chapter 4</span>
+        <h1>Database</h1>
+        <p class="subtitle">Learn how LinkSpice saves your data on your phone so it never disappears.</p>
+      </div>
+
+      <!-- ===== What You'll Learn ===== -->
+      <section class="section" id="what-youll-learn">
+        <h2>What You'll Learn</h2>
+        <p>In this chapter, you'll understand:</p>
+        <ul>
+          <li><strong>What a database is</strong> — a spreadsheet that lives on your phone</li>
+          <li><strong>SQLite</strong> — the type of database LinkSpice uses</li>
+          <li><strong>Schema</strong> — the blueprint that defines how data is organized</li>
+          <li><strong>CRUD</strong> — the four operations: Create, Read, Update, Delete</li>
+          <li><strong>How LinkSpice connects it all</strong> — from schema to code to data on screen</li>
+        </ul>
+      </section>
+
+      <!-- ===== What is a Database ===== -->
+      <section class="section" id="what-is-a-database">
+        <h2>What is a Database?</h2>
+        <p>A database is like a spreadsheet that lives on your phone. Instead of opening Excel or Google Sheets, the data sits right inside the app, ready to use instantly.</p>
+
+        <p>Think of it like this: imagine you have a notebook where you write down every link you want to save. Each page has the URL, a title, and maybe a description. When you close the notebook, your links are still there when you open it again. That's exactly what a database does &mdash; it stores information permanently so it survives app restarts.</p>
+
+        <h3>Rows and Columns</h3>
+        <p>A database stores data in <strong>tables</strong>. A table is like a spreadsheet page. It has:</p>
+        <ul>
+          <li><strong>Columns</strong> — the categories of data (like "URL", "Title", "Description")</li>
+          <li><strong>Rows</strong> — each individual entry (one saved link is one row)</li>
+        </ul>
+
+        <p>Here's what LinkSpice's <code>links</code> table looks like:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">links table — a spreadsheet-like view</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">| id           | url                    | title          | domain        | is_pinned |
+|--------------|------------------------|----------------|---------------|-----------|
+| abc123       | https://react.dev      | React Docs     | react.dev     | 1         |
+| def456       | https://expo.dev       | Expo Docs      | expo.dev      | 0         |
+| ghi789       | https://github.com     | GitHub         | github.com    | 0         |</code></pre>
+        </div>
+
+        <p>Each row is one link. Each column holds a piece of information about that link. The <code>id</code> column is special &mdash; it's a unique identifier so we can find any specific link later.</p>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#9889; Why this matters</div>
+          <p>Without a database, your links would disappear every time you close the app. Variables in code are temporary &mdash; they're gone when the app stops. A database writes data to the phone's storage, so it persists across sessions.</p>
+        </div>
+      </section>
+
+      <!-- ===== SQLite ===== -->
+      <section class="section" id="sqlite">
+        <h2>SQLite &mdash; The Database LinkSpice Uses</h2>
+        <p>LinkSpice uses <strong>SQLite</strong>, a lightweight database that runs right on the phone. No server needed, no internet required. The entire database lives in a single file on the device.</p>
+
+        <p>Why SQLite?</p>
+        <ul>
+          <li><strong>No server</strong> &mdash; it runs inside the app itself</li>
+          <li><strong>Fast</strong> &mdash; reading and writing data is nearly instant</li>
+          <li><strong>Reliable</strong> &mdash; used by millions of apps (including every phone's contacts app)</li>
+          <li><strong>Offline-first</strong> &mdash; works without internet</li>
+        </ul>
+
+        <p>In Expo, SQLite is available through the <code>expo-sqlite</code> package. It gives us simple functions to run SQL queries against the database.</p>
+      </section>
+
+      <!-- ===== schema.ts ===== -->
+      <section class="section" id="schema">
+        <h2>The Schema &mdash; Your Data Blueprint</h2>
+        <p>Before you can store anything, you need to define <em>what</em> you're storing. That's what a <strong>schema</strong> does. It's the blueprint that tells the database: "Here are the tables, here are the columns, here's how they relate to each other."</p>
+
+        <p>LinkSpice has two tables: <code>spaces</code> and <code>links</code>. A space is a folder that holds links. Here's the actual schema:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/db/schema.ts</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import type { DbClient } from './client';
+
+const SCHEMA_SQL = `
+CREATE TABLE IF NOT EXISTS spaces (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  icon TEXT NOT NULL DEFAULT 'folder',
+  color TEXT NOT NULL DEFAULT '#7C5CFF',
+  position INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS links (
+  id TEXT PRIMARY KEY,
+  space_id TEXT,
+  url TEXT NOT NULL UNIQUE,
+  title TEXT NOT NULL,
+  description TEXT,
+  domain TEXT NOT NULL,
+  favicon TEXT,
+  thumbnail TEXT,
+  tags TEXT NOT NULL DEFAULT '[]',
+  is_pinned INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  FOREIGN KEY (space_id) REFERENCES spaces(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_links_space_id ON links(space_id);
+CREATE INDEX IF NOT EXISTS idx_links_created_at ON links(created_at);
+CREATE INDEX IF NOT EXISTS idx_links_is_pinned ON links(is_pinned);
+`;
+
+export const SCHEMA_VERSION = 2;
+
+export function migrate(db: DbClient): void {
+  db.exec('PRAGMA foreign_keys = ON;');
+  const row = db.get&lt;{ user_version: number }&gt;('PRAGMA user_version');
+  const currentVersion = row?.user_version ?? 0;
+
+  if (currentVersion &gt;= SCHEMA_VERSION) {
+    return;
+  }
+
+  if (currentVersion === 0) {
+    db.exec(SCHEMA_SQL);
+  }
+
+  db.exec(`PRAGMA user_version = ${SCHEMA_VERSION}`);
+}</code></pre>
+        </div>
+
+        <p>Let's break this down piece by piece:</p>
+
+        <h3>The <code>spaces</code> table</h3>
+        <ul>
+          <li><code>id TEXT PRIMARY KEY</code> &mdash; a unique text identifier (like <code>"abc123"</code>)</li>
+          <li><code>name TEXT NOT NULL</code> &mdash; the space name (like "Work" or "Personal"), required</li>
+          <li><code>icon TEXT NOT NULL DEFAULT 'folder'</code> &mdash; an icon name, defaults to "folder"</li>
+          <li><code>color TEXT NOT NULL DEFAULT '#7C5CFF'</code> &mdash; a hex color, defaults to purple</li>
+          <li><code>position INTEGER NOT NULL DEFAULT 0</code> &mdash; ordering position</li>
+          <li><code>created_at INTEGER NOT NULL</code> &mdash; timestamp when created</li>
+          <li><code>updated_at INTEGER NOT NULL</code> &mdash; timestamp when last modified</li>
+        </ul>
+
+        <h3>The <code>links</code> table</h3>
+        <ul>
+          <li><code>id TEXT PRIMARY KEY</code> &mdash; unique identifier</li>
+          <li><code>space_id TEXT</code> &mdash; which space this link belongs to (can be null for "loose" links)</li>
+          <li><code>url TEXT NOT NULL UNIQUE</code> &mdash; the link URL, must be unique</li>
+          <li><code>title TEXT NOT NULL</code> &mdash; the display title</li>
+          <li><code>description TEXT</code> &mdash; optional description</li>
+          <li><code>domain TEXT NOT NULL</code> &mdash; extracted domain like "github.com"</li>
+          <li><code>favicon TEXT</code> &mdash; optional favicon URL</li>
+          <li><code>thumbnail TEXT</code> &mdash; optional thumbnail image</li>
+          <li><code>tags TEXT NOT NULL DEFAULT '[]'</code> &mdash; a JSON array of tags stored as text</li>
+          <li><code>is_pinned INTEGER NOT NULL DEFAULT 0</code> &mdash; 0 = not pinned, 1 = pinned</li>
+          <li><code>created_at INTEGER NOT NULL</code> &mdash; timestamp</li>
+          <li><code>updated_at INTEGER NOT NULL</code> &mdash; timestamp</li>
+        </ul>
+
+        <h3>The foreign key</h3>
+        <p>The line <code>FOREIGN KEY (space_id) REFERENCES spaces(id) ON DELETE SET NULL</code> creates a relationship: each link belongs to a space. If that space is deleted, the link isn't deleted &mdash; its <code>space_id</code> just becomes null (it becomes a "loose" link).</p>
+
+        <h3>Indexes</h3>
+        <p>The three <code>CREATE INDEX</code> lines at the bottom create shortcuts for the database. Instead of scanning every row to find links by space or date, the index lets the database jump straight to what it needs. It's like the index at the back of a textbook.</p>
+
+        <h3>Migration</h3>
+        <p>The <code>migrate()</code> function handles schema upgrades. It checks the current version number and applies any new changes. This ensures the database structure stays up to date as the app evolves.</p>
+      </section>
+
+      <!-- ===== db.ts / expo-client.ts ===== -->
+      <section class="section" id="connection">
+        <h2>Database Connection</h2>
+        <p>Before you can run queries, you need to connect to the database. LinkSpice splits this into three files that work together.</p>
+
+        <h3>The Client Interface</h3>
+        <p>This defines what every database client must be able to do:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/db/client.ts</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">export type BindValue = string | number | boolean | null;
+
+export interface DbRunResult {
+  changes: number;
+  lastInsertRowid: number;
+}
+
+export interface DbClient {
+  exec(sql: string): void;
+  run(sql: string, params?: BindValue[]): DbRunResult;
+  all&lt;T = Record&lt;string, unknown&gt;&gt;(sql: string, params?: BindValue[]): T[];
+  get&lt;T = Record&lt;string, unknown&gt;&gt;(sql: string, params?: BindValue[]): T | null;
+}</code></pre>
+        </div>
+
+        <p>Four methods:</p>
+        <ul>
+          <li><code>exec</code> &mdash; run raw SQL (no results returned)</li>
+          <li><code>run</code> &mdash; execute an INSERT, UPDATE, or DELETE and get back how many rows changed</li>
+          <li><code>all</code> &mdash; fetch multiple rows (like getting all links in a space)</li>
+          <li><code>get</code> &mdash; fetch a single row (like finding one link by ID)</li>
+        </ul>
+
+        <h3>The Expo Client</h3>
+        <p>This wraps Expo's SQLite library to match the client interface:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/db/expo-client.ts</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import type { SQLiteDatabase } from 'expo-sqlite';
+import type { BindValue, DbClient, DbRunResult } from './client';
+
+export function createExpoClient(db: SQLiteDatabase): DbClient {
+  return {
+    exec: (sql: string): void =&gt; {
+      db.execSync(sql);
+    },
+    run: (sql: string, params: BindValue[] = []): DbRunResult =&gt; {
+      const result = db.runSync(sql, params);
+      return {
+        changes: result.changes,
+        lastInsertRowid: Number(result.lastInsertRowId),
+      };
+    },
+    all: &lt;T&gt;(sql: string, params: BindValue[] = []): T[] =&gt;
+      db.getAllSync&lt;T&gt;(sql, params),
+    get: &lt;T&gt;(sql: string, params: BindValue[] = []): T | null =&gt;
+      db.getFirstSync&lt;T&gt;(sql, params),
+  };
+}</code></pre>
+        </div>
+
+        <p>It translates our simple <code>DbClient</code> methods into Expo's <code>runSync</code>, <code>getAllSync</code>, and <code>getFirstSync</code> calls. This abstraction means if we ever switch to a different SQLite library, we only change this one file.</p>
+
+        <h3>Getting the Database</h3>
+        <p>The <code>db.ts</code> file ties it all together &mdash; it opens the database file and runs the migration:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/db/db.ts</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { openDatabaseSync } from 'expo-sqlite';
+import type { DbClient } from './client';
+import { createExpoClient } from './expo-client';
+import { migrate } from './schema';
+
+let client: DbClient | null = null;
+
+export function getDbClient(): DbClient {
+  if (!client) {
+    const db = openDatabaseSync('linkspace.db');
+    client = createExpoClient(db);
+    migrate(client);
+  }
+  return client;
+}</code></pre>
+        </div>
+
+        <p>The <code>getDbClient()</code> function does three things:</p>
+        <ol>
+          <li>Opens (or creates) a file called <code>linkspace.db</code> on the phone</li>
+          <li>Wraps it with our Expo client</li>
+          <li>Runs the migration to make sure the tables exist</li>
+        </ol>
+
+        <p>It also caches the client in a variable so the database is only opened once. Every time you call <code>getDbClient()</code>, you get the same connection back.</p>
+      </section>
+
+      <!-- ===== rows.ts ===== -->
+      <section class="section" id="rows">
+        <h2>Row Mapping &mdash; Database to JavaScript</h2>
+        <p>SQLite returns data as plain objects with <code>snake_case</code> column names (like <code>space_id</code>, <code>created_at</code>). But our TypeScript code uses <code>camelCase</code> (like <code>spaceId</code>, <code>createdAt</code>). The <code>rows.ts</code> file handles this translation.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/db/rows.ts</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import type { Link, Space } from '../types';
+
+interface LinkRow {
+  id: string;
+  space_id: string | null;
+  url: string;
+  title: string;
+  description: string | null;
+  domain: string;
+  favicon: string | null;
+  thumbnail: string | null;
+  tags: string;
+  is_pinned: number;
+  created_at: number;
+  updated_at: number;
+}
+
+export function mapLinkRow(row: LinkRow): Link {
+  return {
+    id: row.id,
+    spaceId: row.space_id,
+    url: row.url,
+    title: row.title,
+    description: row.description,
+    domain: row.domain,
+    favicon: row.favicon,
+    thumbnail: row.thumbnail,
+    tags: parseTags(row.tags),
+    isPinned: row.is_pinned === 1,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export function parseTags(raw: string): string[] {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((t): t is string =&gt; typeof t === 'string');
+    }
+  } catch {
+    // Malformed tag data is treated as no tags.
+  }
+  return [];
+}
+
+export function serializeTags(tags: string[]): string {
+  return JSON.stringify([...new Set(tags.map((t) =&gt; t.trim()).filter(Boolean))]);
+}</code></pre>
+        </div>
+
+        <p>Three key functions:</p>
+        <ul>
+          <li><code>mapLinkRow</code> &mdash; converts a database row into a <code>Link</code> object that the rest of the app understands. It renames fields (<code>space_id</code> &rarr; <code>spaceId</code>), converts the <code>is_pinned</code> integer (0/1) to a boolean (true/false), and parses the JSON tags string.</li>
+          <li><code>parseTags</code> &mdash; safely converts the JSON string <code>'["react","expo"]'</code> into a JavaScript array <code>["react", "expo"]</code>. If the data is corrupted, it returns an empty array instead of crashing.</li>
+          <li><code>serializeTags</code> &mdash; does the reverse: converts an array of tags into a JSON string for storage. It also removes duplicates and trims whitespace.</li>
+        </ul>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#10004; Tip</div>
+          <p>Notice how SQLite stores booleans as integers (0 or 1) and tags as a JSON string. Databases have their own type system, and row mapping bridges the gap between what the database stores and what your code expects.</p>
+        </div>
+      </section>
+
+      <!-- ===== CRUD Operations ===== -->
+      <section class="section" id="crud">
+        <h2>CRUD Operations</h2>
+        <p>CRUD stands for the four things you can do with data: <strong>Create</strong>, <strong>Read</strong>, <strong>Update</strong>, and <strong>Delete</strong>. Every database operation falls into one of these categories. Let's look at how LinkSpice implements each one.</p>
+
+        <h3>Create &mdash; Adding a new link</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts &mdash; createLink</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function createLink(db: DbClient, input: CreateLinkInput): Link {
+  const now = Date.now();
+  const url = input.url.trim();
+  const link: Link = {
+    id: newId(),
+    spaceId: input.spaceId ?? null,
+    url,
+    title: displayTitle(url, input.title ?? null),
+    description: input.description ?? null,
+    domain: input.domain ?? getDomain(url),
+    favicon: input.favicon ?? null,
+    thumbnail: input.thumbnail ?? null,
+    tags: input.tags ?? [],
+    isPinned: input.isPinned ?? false,
+    createdAt: input.createdAt ?? now,
+    updatedAt: now,
+  };
+
+  db.run(
+    `INSERT INTO links
+       (id, space_id, url, title, description, domain, favicon, thumbnail, tags, is_pinned, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      link.id,
+      link.spaceId,
+      link.url,
+      link.title,
+      link.description,
+      link.domain,
+      link.favicon,
+      link.thumbnail,
+      serializeTags(link.tags),
+      link.isPinned ? 1 : 0,
+      link.createdAt,
+      link.updatedAt,
+    ]
+  );
+  return link;
+}</code></pre>
+        </div>
+
+        <p>This function:</p>
+        <ol>
+          <li>Creates a <code>Link</code> object with all the fields filled in (generating an ID, extracting the domain, etc.)</li>
+          <li>Runs an <code>INSERT INTO</code> SQL statement with <code>?</code> placeholders for each value</li>
+          <li>Returns the created link so the rest of the app can use it</li>
+        </ol>
+
+        <p>The <code>?</code> placeholders are called <strong>parameters</strong>. They prevent SQL injection attacks &mdash; a security risk where malicious input could damage your database. Never put user input directly into SQL strings.</p>
+
+        <h3>Read &mdash; Fetching links</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts &mdash; listBySpace</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function listBySpace(db: DbClient, spaceId: string | null): Link[] {
+  const rows = db.all(
+    `SELECT ${CURRENTLY_SELECTED_COLUMNS} FROM links
+     WHERE space_id IS ? ORDER BY created_at DESC`,
+    spaceId === null ? [null] : [spaceId]
+  );
+  return rows.map((row) =&gt; mapLinkRow(row as never));
+}</code></pre>
+        </div>
+
+        <p>This fetches all links in a space. It uses <code>SELECT</code> to get rows, <code>WHERE</code> to filter by space, and <code>ORDER BY created_at DESC</code> to show newest first. The raw rows are then mapped to <code>Link</code> objects.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts &mdash; getLink</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">function selectLink(db: DbClient, id: string): Link | null {
+  const row = db.get(
+    `SELECT ${CURRENTLY_SELECTED_COLUMNS} FROM links WHERE id = ?`,
+    [id]
+  );
+  return row ? mapLinkRow(row as never) : null;
+}
+
+export function getLink(db: DbClient, id: string): Link | null {
+  return selectLink(db, id);
+}</code></pre>
+        </div>
+
+        <p>This fetches a single link by its ID. It uses <code>db.get</code> (which returns one row or null) instead of <code>db.all</code> (which returns an array).</p>
+
+        <h3>Update &mdash; Editing a link</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts &mdash; updateLink</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function updateLink(
+  db: DbClient,
+  id: string,
+  patch: UpdateLinkInput
+): Link | null {
+  const existing = selectLink(db, id);
+  if (!existing) {
+    return null;
+  }
+
+  const next: Link = {
+    ...existing,
+    title: patch.title !== undefined ? patch.title.trim() || existing.title : existing.title,
+    spaceId: patch.spaceId !== undefined ? patch.spaceId : existing.spaceId,
+    description:
+      patch.description !== undefined ? patch.description : existing.description,
+    thumbnail: patch.thumbnail !== undefined ? patch.thumbnail : existing.thumbnail,
+    tags: patch.tags !== undefined ? patch.tags : existing.tags,
+    updatedAt: Date.now(),
+  };
+
+  db.run(
+    `UPDATE links
+       SET title = ?, space_id = ?, description = ?, thumbnail = ?, tags = ?, updated_at = ?
+     WHERE id = ?`,
+    [
+      next.title,
+      next.spaceId,
+      next.description,
+      next.thumbnail,
+      serializeTags(next.tags),
+      next.updatedAt,
+      id,
+    ]
+  );
+  return next;
+}</code></pre>
+        </div>
+
+        <p>This function:</p>
+        <ol>
+          <li>Fetches the existing link first</li>
+          <li>Applies only the fields that changed (the "patch")</li>
+          <li>Runs an <code>UPDATE</code> SQL statement</li>
+          <li>Returns the updated link</li>
+        </ol>
+
+        <p>The <code>...existing</code> syntax is called the <strong>spread operator</strong>. It copies all fields from the existing link, then the patch overwrites only the fields that were provided.</p>
+
+        <h3>Delete &mdash; Removing a link</h3>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts &mdash; deleteLink</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function deleteLink(db: DbClient, id: string): void {
+  db.run('DELETE FROM links WHERE id = ?', [id]);
+}</code></pre>
+        </div>
+
+        <p>The simplest operation &mdash; just <code>DELETE FROM</code> with a <code>WHERE</code> clause to target the specific link. One line of SQL does the job.</p>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#9889; Why this matters</div>
+          <p>Every database operation in LinkSpice follows this pattern: receive input, run SQL, return results. The repository layer keeps all database logic in one place, so the rest of the app never has to think about SQL.</p>
+        </div>
+      </section>
+
+      <!-- ===== Building It ===== -->
+      <section class="section" id="building-it">
+        <h2>Building It &mdash; Step by Step</h2>
+        <p>Let's walk through how you'd create a simple database, add some data, and read it back. This mirrors what LinkSpice does behind the scenes.</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Create the database file</h4>
+            <p>When the app first opens, <code>getDbClient()</code> runs. It creates a file called <code>linkspace.db</code> on the phone and opens a connection to it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Create the tables</h4>
+            <p>The <code>migrate()</code> function runs the schema SQL. This creates the <code>spaces</code> and <code>links</code> tables if they don't exist yet. The <code>IF NOT EXISTS</code> keyword means it won't throw an error if the tables already exist.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Add some data</h4>
+            <p>You could run SQL directly to insert a link:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Direct SQL (what LinkSpice does internally)</span>
+                <button class="copy-btn">&#128203; Copy</button>
+              </div>
+              <pre><code class="language-typescript">db.run(
+  `INSERT INTO links (id, url, title, domain, is_pinned, created_at, updated_at)
+   VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  ['abc123', 'https://react.dev', 'React Docs', 'react.dev', 0, 1690000000000, 1690000000000]
+);</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Read it back</h4>
+            <p>To fetch that link and display it on screen:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Fetching a link</span>
+                <button class="copy-btn">&#128203; Copy</button>
+              </div>
+              <pre><code class="language-typescript">const link = db.get('SELECT * FROM links WHERE id = ?', ['abc123']);
+// Returns: { id: 'abc123', url: 'https://react.dev', title: 'React Docs', ... }</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h4>Update it</h4>
+            <p>If you pin that link:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Updating a link</span>
+                <button class="copy-btn">&#128203; Copy</button>
+              </div>
+              <pre><code class="language-typescript">db.run('UPDATE links SET is_pinned = 1, updated_at = ? WHERE id = ?',
+  [Date.now(), 'abc123']);</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <h4>Delete it</h4>
+            <p>And if you remove it:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Deleting a link</span>
+                <button class="copy-btn">&#128203; Copy</button>
+              </div>
+              <pre><code class="language-typescript">db.run('DELETE FROM links WHERE id = ?', ['abc123']);</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Verify ===== -->
+      <div class="verify">
+        <div class="verify-title">&#10004; What You Should See</div>
+        <p>After reading this chapter, you should be able to:</p>
+        <ul>
+          <li>Explain what a database is in your own words</li>
+          <li>Describe what the <code>spaces</code> and <code>links</code> tables store</li>
+          <li>Understand what each CRUD operation does</li>
+          <li>Know how <code>rows.ts</code> translates database data for JavaScript</li>
+          <li>Identify the four files in <code>src/db/</code> and what each one does</li>
+        </ul>
+        <p>Open the LinkSpice app and navigate between spaces &mdash; every screen you see is reading data from this database.</p>
+      </div>
+
+      <!-- ===== Exercise ===== -->
+      <div class="exercise">
+        <div class="exercise-title">&#128187; Exercise &mdash; Try It Yourself</div>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Test your understanding by making a change to the schema.</p>
+        <ol>
+          <li><strong>Add a <code>color</code> field to the <code>links</code> table.</strong> In <code>src/db/schema.ts</code>, add a new column to the links table: <code>color TEXT NOT NULL DEFAULT '#FF5722'</code>. Put it after the <code>thumbnail</code> column.</li>
+          <li><strong>Update the row mapper.</strong> In <code>src/db/rows.ts</code>, add <code>color</code> to the <code>LinkRow</code> interface and map it in <code>mapLinkRow</code>.</li>
+          <li><strong>Bump the schema version.</strong> Change <code>SCHEMA_VERSION</code> from <code>2</code> to <code>3</code> so the migration runs again.</li>
+        </ol>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">&#10004; Stuck? Here's what the schema change should look like:</div>
+        <p>In <code>src/db/schema.ts</code>, your <code>links</code> table should now have a <code>color</code> column:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-block-filename">src/db/schema.ts &mdash; After Exercise</span>
+          <button class="copy-btn">&#128203; Copy</button>
+        </div>
+        <pre><code class="language-typescript">const SCHEMA_SQL = `
+CREATE TABLE IF NOT EXISTS spaces (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  icon TEXT NOT NULL DEFAULT 'folder',
+  color TEXT NOT NULL DEFAULT '#7C5CFF',
+  position INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS links (
+  id TEXT PRIMARY KEY,
+  space_id TEXT,
+  url TEXT NOT NULL UNIQUE,
+  title TEXT NOT NULL,
+  description TEXT,
+  domain TEXT NOT NULL,
+  favicon TEXT,
+  thumbnail TEXT,
+  color TEXT NOT NULL DEFAULT '#FF5722',
+  tags TEXT NOT NULL DEFAULT '[]',
+  is_pinned INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  FOREIGN KEY (space_id) REFERENCES spaces(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_links_space_id ON links(space_id);
+CREATE INDEX IF NOT EXISTS idx_links_created_at ON links(created_at);
+CREATE INDEX IF NOT EXISTS idx_links_is_pinned ON links(is_pinned);
+`;
+
+export const SCHEMA_VERSION = 3;</code></pre>
+      </div>
+
+      <!-- ===== Chapter Navigation ===== -->
+      <nav class="chapter-nav">
+        <a href="03-navigation.html">
+          <span class="nav-label">Previous</span>
+          <span class="nav-title">Chapter 3 — Navigation</span>
+        </a>
+        <a href="05-hooks.html" class="next">
+          <span class="nav-label">Next</span>
+          <span class="nav-title">Chapter 5 — Hooks &amp; State</span>
+        </a>
+      </nav>
+
+      <button id="mark-complete" data-chapter="4" class="copy-btn" style="margin-top:24px;padding:12px 24px;font-size:14px;">Mark Chapter Complete</button>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

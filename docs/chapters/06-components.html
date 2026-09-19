@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 6: Components - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+  <button class="mobile-toggle" id="mobile-toggle">&#9776;</button>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width: 60%"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1"><span class="num">01</span>Setup &amp; Hello World</a>
+        <a href="02-structure.html" data-chapter="2"><span class="num">02</span>Project Structure</a>
+        <a href="03-navigation.html" data-chapter="3"><span class="num">03</span>Navigation</a>
+        <a href="04-database.html" data-chapter="4"><span class="num">04</span>Database</a>
+        <a href="05-hooks.html" data-chapter="5"><span class="num">05</span>Hooks &amp; State</a>
+        <a href="06-components.html" class="active" data-chapter="6"><span class="num">06</span>Components</a>
+        <a href="07-links.html" data-chapter="7"><span class="num">07</span>Links Feature</a>
+        <a href="08-theme.html" data-chapter="8"><span class="num">08</span>Theme &amp; Polish</a>
+        <a href="09-onboarding.html" data-chapter="9"><span class="num">09</span>Onboarding &amp; Extras</a>
+        <a href="10-build.html" data-chapter="10"><span class="num">10</span>Build &amp; Deploy</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="chapter-header">
+        <span class="chapter-badge">Chapter 6</span>
+        <h1>Components</h1>
+        <p class="subtitle">Build reusable UI pieces with React Native components, props, and styles. See the real LinkSpice components in action.</p>
+      </div>
+
+      <!-- ===== What You'll Learn ===== -->
+      <section class="section" id="what-youll-learn">
+        <h2>What You'll Learn</h2>
+        <p>In this chapter, you'll understand:</p>
+        <ul>
+          <li><strong>What components are</strong> — reusable building blocks that make up every screen</li>
+          <li><strong>How props work</strong> — passing data into components so they display the right information</li>
+          <li><strong>How StyleSheet works</strong> — giving your components colors, sizes, and layout</li>
+          <li><strong>Real LinkSpice components</strong> — reading Button, SpaceCard, Screen, and LinkPreviewCard</li>
+          <li><strong>Building your own component</strong> — creating a UserProfile component from scratch</li>
+        </ul>
+      </section>
+
+      <!-- ===== What is a Component ===== -->
+      <section class="section" id="what-is-a-component">
+        <h2>What is a Component?</h2>
+        <p>A <strong>component</strong> is a function that returns JSX — the special markup that React Native turns into what you see on screen. Think of each component like a Lego brick: small, self-contained, and reusable. You snap them together to build bigger things like screens and entire apps.</p>
+
+        <p>Here is the simplest possible component:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">SimpleComponent.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export function Greeting() {
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Hello, world!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p>That's it. A function with a name, returning some JSX. You can then use <code>&lt;Greeting /&gt;</code> anywhere in your app — just like using a built-in element.</p>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why components matter</div>
+          <p>Without components, you'd write the same button code on every screen. With components, you write it once and reuse it everywhere. If you ever want to change the button, you change it in one place and every screen updates automatically.</p>
+        </div>
+      </section>
+
+      <!-- ===== Props ===== -->
+      <section class="section" id="props">
+        <h2>Props — Passing Data Into Components</h2>
+        <p>Components become powerful when they accept <strong>props</strong> (short for "properties"). Props are inputs you pass into a component, just like arguments to a function. They let the same component display different data each time you use it.</p>
+
+        <p>Here's a component with props:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">UserBadge.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">interface UserBadgeProps {
+  name: string;
+  age: number;
+}
+
+export function UserBadge({ name, age }: UserBadgeProps) {
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;{name} is {age} years old&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p>Now you can use it with different data:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Usage</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">&lt;UserBadge name="Alice" age={25} /&gt;
+&lt;UserBadge name="Bob" age={30} /&gt;</code></pre>
+        </div>
+
+        <p>Each use passes different values. The component is the same — the props change.</p>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Props are like function arguments</div>
+          <p>If you know what a function parameter is, you already know props. <code>function greet(name)</code> takes <code>name</code> as a parameter. A component takes props the same way — they're values you pass in when you use the component.</p>
+        </div>
+      </section>
+
+      <!-- ===== StyleSheet ===== -->
+      <section class="section" id="stylesheet">
+        <h2>StyleSheet — How to Style Components</h2>
+        <p>React Native doesn't use CSS files like websites. Instead, you define styles in JavaScript using <code>StyleSheet.create()</code>. It works like CSS but with JavaScript syntax — property names are camelCase instead of kebab-case.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">StyleSheet Example</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">const styles = StyleSheet.create({
+  container: {
+    flex: 1,              // fill all available space
+    backgroundColor: '#0a0a0c',  // dark background
+    padding: 16,          // space inside the edges
+  },
+  title: {
+    fontSize: 18,         // text size
+    fontWeight: '600',    // bold-ish
+    color: '#e4e4e7',    // light text
+  },
+});</code></pre>
+        </div>
+
+        <p>Here are the most common style properties you'll see:</p>
+        <ul>
+          <li><code>flex: 1</code> — make the element fill all available space</li>
+          <li><code>backgroundColor</code> — the background color</li>
+          <li><code>padding</code> / <code>margin</code> — space inside / outside the element</li>
+          <li><code>borderRadius</code> — round the corners</li>
+          <li><code>fontSize</code> — text size</li>
+          <li><code>color</code> — text color</li>
+          <li><code>fontWeight</code> — how bold the text is</li>
+          <li><code>flexDirection: 'row'</code> — lay children out horizontally instead of vertically</li>
+          <li><code>alignItems</code> / <code>justifyContent</code> — alignment controls</li>
+        </ul>
+      </section>
+
+      <!-- ===== Button Component ===== -->
+      <section class="section" id="button-component">
+        <h2>The Button Component</h2>
+        <p>The LinkSpice Button is a great first real component to study. It accepts props for the label text, a press handler, a visual variant, size, icons, and more. Here's the actual code from the app:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/Button.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { Pressable, StyleSheet, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
+import { radius, spacing, type } from '../theme/tokens';
+
+export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
+
+interface ButtonProps {
+  label?: string;
+  onPress?: () =&gt; void;
+  variant?: ButtonVariant;
+  disabled?: boolean;
+  icon?: keyof typeof Ionicons.glyphMap;
+  iconSize?: number;
+  size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
+}
+
+export function Button({
+  label,
+  onPress,
+  variant = 'primary',
+  disabled = false,
+  icon,
+  iconSize = 18,
+  size = 'md',
+  fullWidth = false,
+}: ButtonProps) {
+  const { palette } = useTheme();
+
+  const backgrounds: Record&lt;ButtonVariant, string&gt; = {
+    primary: palette.accent,
+    secondary: palette.surfaceRaised,
+    danger: palette.danger,
+    ghost: 'transparent',
+  };
+
+  const foreground: Record&lt;ButtonVariant, string&gt; = {
+    primary: '#FFFFFF',
+    secondary: palette.textPrimary,
+    danger: '#FFFFFF',
+    ghost: palette.textSecondary,
+  };
+
+  const height = size === 'sm' ? 36 : size === 'md' ? 44 : 52;
+  const font = size === 'lg' ? type.body : type.label;
+
+  return (
+    &lt;Pressable
+      accessibilityRole="button"
+      disabled={disabled}
+      onPress={onPress}
+      style={({ pressed }) =&gt; [
+        styles.base,
+        {
+          backgroundColor: backgrounds[variant],
+          height,
+          paddingHorizontal: size === 'sm' ? spacing.md : spacing.lg,
+          opacity: disabled ? 0.5 : 1,
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+          alignSelf: fullWidth ? 'stretch' : 'auto',
+        },
+        variant === 'ghost' &amp;&amp; styles.ghostBorder,
+      ]}
+    &gt;
+      {icon ? (
+        &lt;Ionicons name={icon} size={iconSize} color={foreground[variant]} /&gt;
+      ) : null}
+      {label ? (
+        &lt;Text style={[font, { color: foreground[variant], fontWeight: '600' }]}&gt;
+          {label}
+        &lt;/Text&gt;
+      ) : null}
+    &lt;/Pressable&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  base: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    borderRadius: radius.lg,
+  },
+  ghostBorder: {},
+});</code></pre>
+        </div>
+
+        <p>Let's break down what's happening:</p>
+        <ul>
+          <li><strong><code>interface ButtonProps</code></strong> — defines what props the button accepts. <code>?</code> means optional — you don't have to pass every prop.</li>
+          <li><strong><code>variant = 'primary'</code></strong> — default values. If no variant is passed, it uses <code>'primary'</code>.</li>
+          <li><strong><code>useTheme()</code></strong> — gets the current color palette from the app's theme system.</li>
+          <li><strong><code>Pressable</code></strong> — React Native's touchable element. It supports a <code>pressed</code> state for visual feedback.</li>
+          <li><strong><code>style={({ pressed }) =&gt; [...]}</code></strong> — a function that returns different styles depending on whether the button is pressed.</li>
+          <li><strong><code>transform: [{ scale: pressed ? 0.98 : 1 }]</code></strong> — shrinks the button slightly when pressed for a tactile feel.</li>
+        </ul>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">How it's used in the app</div>
+          <p>Somewhere in LinkSpice, you'll see code like <code>&lt;Button label="Save" onPress={handleSave} /&gt;</code>. That's the whole button — the component handles all the styling and behavior internally.</p>
+        </div>
+      </section>
+
+      <!-- ===== SpaceCard Component ===== -->
+      <section class="section" id="spacecard-component">
+        <h2>The SpaceCard Component</h2>
+        <p>A SpaceCard shows a "space" (a group of links) on the home screen. It displays a category pill, preview icons of links inside it, the space name, and a link count. Here's the real code:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/SpaceCard.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import { type } from '../theme/tokens';
+import { formatCount } from '../lib/format';
+import { categoryAccent, categoryFor } from './spaceCategories';
+import { SpaceCategoryPill } from './SpaceCategoryPill';
+import { SpacePreviewRow } from './SpacePreviewRow';
+import { SpaceMoreButton } from './SpaceMoreButton';
+import { useResponsive } from '../hooks/useResponsive';
+import type { Space } from '../types';
+import type { LinkPreview } from '../repositories/links';
+
+interface SpaceCardProps {
+  space: Space;
+  count: number;
+  previews: LinkPreview[];
+  onPress?: () =&gt; void;
+  onMenu?: () =&gt; void;
+  onAddLink?: () =&gt; void;
+}
+
+export function SpaceCard({
+  space,
+  count,
+  previews,
+  onPress,
+  onMenu,
+  onAddLink,
+}: SpaceCardProps) {
+  const { palette } = useTheme();
+  const r = useResponsive();
+  const category = categoryFor(space.id);
+  const accent = category ? categoryAccent(category, space.color) : space.color;
+
+  const cardHeight = r.width &lt; 360 ? 170 : r.width &lt; 412 ? 185 : 200;
+  const pad = r.width &lt; 360 ? 14 : r.width &lt; 412 ? 16 : 18;
+
+  return (
+    &lt;Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) =&gt; [
+        styles.card,
+        {
+          height: cardHeight,
+          borderRadius: r.width &lt; 360 ? 16 : 18,
+          padding: pad,
+          backgroundColor: palette.surface,
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+        },
+      ]}
+    &gt;
+      {/* Top row: category pill left, three-dot menu right */}
+      &lt;View style={styles.topRow}&gt;
+        {category ? (
+          &lt;SpaceCategoryPill
+            label={category}
+            accent={accent}
+            height={r.width &lt; 360 ? 30 : 34}
+            dotSize={r.width &lt; 360 ? 5 : 6}
+            fontSize={11}
+          /&gt;
+        ) : (
+          &lt;View style={styles.placeholder} /&gt;
+        )}
+        &lt;SpaceMoreButton onPress={onMenu} iconSize={r.width &lt; 360 ? 14 : 16} /&gt;
+      &lt;/View&gt;
+
+      {/* Preview icons row — overlapping */}
+      &lt;View style={styles.previewWrap}&gt;
+        &lt;SpacePreviewRow
+          previews={previews}
+          count={count}
+          accent={accent}
+          iconName={space.icon}
+          iconColor={accent}
+          tileSize={r.width &lt; 360 ? 32 : 36}
+          overlap={6}
+        /&gt;
+      &lt;/View&gt;
+
+      {/* Title and link count */}
+      &lt;View style={styles.info}&gt;
+        &lt;Text style={[styles.title, { color: palette.textPrimary }]} numberOfLines={1}&gt;
+          {space.name}
+        &lt;/Text&gt;
+        &lt;Text style={[styles.count, { color: palette.textSecondary }]}&gt;
+          {formatCount(count)} link{count === 1 ? '' : 's'}
+        &lt;/Text&gt;
+      &lt;/View&gt;
+    &lt;/Pressable&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    flex: 1,
+    overflow: 'hidden',
+    justifyContent: 'space-between',
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  placeholder: {
+    width: 1,
+    height: 30,
+  },
+  previewWrap: {},
+  info: {
+    gap: 2,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: -0.3,
+  },
+  count: {
+    fontSize: 13,
+    fontWeight: '400',
+  },
+});</code></pre>
+        </div>
+
+        <p>Key things to notice:</p>
+        <ul>
+          <li><strong>Props define the data</strong> — <code>space</code>, <code>count</code>, <code>previews</code> are all data passed in from the parent screen.</li>
+          <li><strong>Responsive sizing</strong> — <code>useResponsive()</code> returns the screen width, so the card adjusts its height and padding for different phone sizes.</li>
+          <li><strong>Composed from smaller components</strong> — <code>SpaceCategoryPill</code>, <code>SpacePreviewRow</code>, and <code>SpaceMoreButton</code> are all separate components used inside this one.</li>
+          <li><strong>Conditional rendering</strong> — <code>{category ? (...) : (...)}</code> shows the pill if a category exists, or a placeholder if not.</li>
+        </ul>
+      </section>
+
+      <!-- ===== LinkPreviewCard Component ===== -->
+      <section class="section" id="linkpreviewcard-component">
+        <h2>The LinkPreviewCard Component</h2>
+        <p>This component shows a preview of a single link — with a thumbnail image (or brand logo, or fallback image), the title, and the domain. Here's the actual code:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/LinkPreviewCard.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../theme/ThemeContext';
+import { brandFor } from '../lib/brand';
+import { getDomain } from '../lib/url';
+import { useResponsive } from '../hooks/useResponsive';
+import type { Link } from '../types';
+
+const FALLBACK_IMAGES = [
+  require('../../assets/images/sunflower-robot.png'),
+  require('../../assets/images/fantom-logo.png'),
+];
+
+interface LinkPreviewCardProps {
+  link: Link;
+  onPress?: () =&gt; void;
+}
+
+export function LinkPreviewCard({ link, onPress }: LinkPreviewCardProps) {
+  const { palette } = useTheme();
+  const r = useResponsive();
+  const brand = brandFor(link.url);
+  const domain = link.domain || getDomain(link.url);
+  const hasImage = link.thumbnail?.startsWith('http') || link.favicon?.startsWith('http');
+  const fallbackImage = FALLBACK_IMAGES[Math.abs(link.id.charCodeAt(0)) % FALLBACK_IMAGES.length];
+
+  const cardH = r.width &lt; 360 ? 120 : r.width &lt; 412 ? 130 : 140;
+  const imgSize = cardH - 24;
+  const pad = r.width &lt; 360 ? 12 : 14;
+
+  return (
+    &lt;Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) =&gt; [
+        styles.card,
+        {
+          height: cardH,
+          borderRadius: r.width &lt; 360 ? 14 : 16,
+          padding: pad,
+          backgroundColor: palette.surface,
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+        },
+      ]}
+    &gt;
+      &lt;View style={[styles.imageWrap, { width: imgSize, height: imgSize, borderRadius: r.width &lt; 360 ? 10 : 12, backgroundColor: brand?.bg ?? palette.surfaceRaised }]}&gt;
+        {hasImage ? (
+          &lt;Image
+            source={{ uri: (link.thumbnail || link.favicon) ?? undefined }}
+            style={[styles.image, { borderRadius: r.width &lt; 360 ? 10 : 12 }]}
+          /&gt;
+        ) : brand ? (
+          &lt;Text style={[styles.brandLabel, { color: brand.fg, fontSize: Math.round(imgSize * 0.5) }]}&gt;
+            {brand.label}
+          &lt;/Text&gt;
+        ) : (
+          &lt;Image source={fallbackImage} style={[styles.image, { borderRadius: r.width &lt; 360 ? 10 : 12 }]} /&gt;
+        )}
+      &lt;/View&gt;
+
+      &lt;View style={styles.info}&gt;
+        &lt;Text style={[styles.title, { color: palette.textPrimary }]} numberOfLines={2}&gt;
+          {link.title || domain}
+        &lt;/Text&gt;
+        &lt;Text style={[styles.domain, { color: palette.textSecondary }]} numberOfLines={1}&gt;
+          {domain}
+        &lt;/Text&gt;
+      &lt;/View&gt;
+    &lt;/Pressable&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  imageWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  brandLabel: {
+    fontWeight: '700',
+  },
+  info: {
+    flex: 1,
+    gap: 4,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: '600',
+    letterSpacing: -0.2,
+  },
+  domain: {
+    fontSize: 13,
+    fontWeight: '400',
+  },
+});</code></pre>
+        </div>
+
+        <p>Notice how this component handles three different image scenarios:</p>
+        <ul>
+          <li><strong>Has a thumbnail URL</strong> — shows the actual image from the web</li>
+          <li><strong>Has a known brand</strong> — shows the brand's label and color (like a GitHub or YouTube logo)</li>
+          <li><strong>Neither</strong> — falls back to a local placeholder image</li>
+        </ul>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why this pattern matters</div>
+          <p>The <code>??</code> and <code>||</code> operators are used for fallbacks. <code>link.domain || getDomain(link.url)</code> means "use the domain if it exists, otherwise extract it from the URL." This makes the component resilient — it works even with incomplete data.</p>
+        </div>
+      </section>
+
+      <!-- ===== Screen Component ===== -->
+      <section class="section" id="screen-component">
+        <h2>The Screen Component</h2>
+        <p>The Screen component is a simple wrapper that every screen in LinkSpice uses. It adds safe area padding (so content doesn't go behind the notch or status bar) and sets the background color from the theme.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/Screen.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import type { ReactNode } from 'react';
+import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../theme/ThemeContext';
+
+interface ScreenProps {
+  children: ReactNode;
+  style?: StyleProp&lt;ViewStyle&gt;;
+}
+
+export function Screen({ children, style }: ScreenProps) {
+  const { palette } = useTheme();
+  return (
+    &lt;SafeAreaView
+      edges={['top', 'left', 'right', 'bottom']}
+      style={[styles.screen, { backgroundColor: palette.background }, style]}
+    &gt;
+      {children}
+    &lt;/SafeAreaView&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
+});</code></pre>
+        </div>
+
+        <p>Key things to notice:</p>
+        <ul>
+          <li><strong><code>children: ReactNode</code></strong> — this prop accepts any JSX. It's how wrapper components work — you put content <em>inside</em> the component and it wraps around it.</li>
+          <li><strong><code>SafeAreaView</code></strong> — a React Native component that adds padding so content stays away from notches, rounded corners, and the status bar.</li>
+          <li><strong><code>edges={['top', 'left', 'right', 'bottom']}</code></strong> — tells SafeAreaView to add safe padding on all four sides.</li>
+          <li><strong><code>flex: 1</code></strong> — makes the screen fill the entire phone display.</li>
+        </ul>
+
+        <p>Every screen in LinkSpice wraps its content like this:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Usage in a screen</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export default function HomeScreen() {
+  return (
+    &lt;Screen&gt;
+      &lt;Text&gt;Welcome home!&lt;/Text&gt;
+    &lt;/Screen&gt;
+  );
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- ===== Building It ===== -->
+      <section class="section" id="building-it">
+        <h2>Building It — Your Own Component</h2>
+        <p>Now let's build a <code>UserProfile</code> component step by step. This component will show a user's name, their bio, and a follow button. We'll use everything we've learned.</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Create the file</h4>
+            <p>Inside <code>src/components/</code>, create a new file called <code>UserProfile.tsx</code>.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Define the props</h4>
+            <p>First, figure out what data this component needs. It needs a user's name, their bio, and a callback for when the follow button is pressed.</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/UserProfile.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { View, Text, StyleSheet } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
+import { Button } from './Button';
+
+interface UserProfileProps {
+  name: string;
+  bio: string;
+  onFollow?: () =&gt; void;
+}
+
+export function UserProfile({ name, bio, onFollow }: UserProfileProps) {
+  const { palette } = useTheme();
+
+  return (
+    &lt;View style={[styles.card, { backgroundColor: palette.surface }]}&gt;
+      &lt;View style={styles.avatar}&gt;
+        &lt;Text style={[styles.initial, { color: palette.accent }]}&gt;
+          {name.charAt(0).toUpperCase()}
+        &lt;/Text&gt;
+      &lt;/View&gt;
+
+      &lt;View style={styles.info}&gt;
+        &lt;Text style={[styles.name, { color: palette.textPrimary }]}&gt;{name}&lt;/Text&gt;
+        &lt;Text style={[styles.bio, { color: palette.textSecondary }]}&gt;{bio}&lt;/Text&gt;
+      &lt;/View&gt;
+
+      &lt;Button
+        label="Follow"
+        onPress={onFollow}
+        variant="secondary"
+        size="sm"
+      /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 14,
+    gap: 12,
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#1a1a1e',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  initial: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  info: {
+    flex: 1,
+    gap: 2,
+  },
+  name: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  bio: {
+    fontSize: 13,
+  },
+});</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Use it in a screen</h4>
+            <p>Import and use it just like any other component:</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Usage</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { UserProfile } from '../src/components/UserProfile';
+
+export default function ProfileScreen() {
+  return (
+    &lt;Screen&gt;
+      &lt;UserProfile
+        name="Alice"
+        bio="Building cool things with LinkSpice"
+        onFollow={() =&gt; console.log('Followed!')}
+      /&gt;
+    &lt;/Screen&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Notice the pattern</div>
+          <p>We reused the <code>Button</code> component we studied earlier instead of building a new button from scratch. This is the whole point of components — compose small pieces into bigger ones. The <code>UserProfile</code> is made of <code>View</code>, <code>Text</code>, and <code>Button</code>.</p>
+        </div>
+      </section>
+
+      <!-- ===== Verify ===== -->
+      <div class="verify">
+        <div class="verify-title">Verify your understanding</div>
+        <p>Before moving on, make sure you can:</p>
+        <ul>
+          <li>Explain what a component is and why we use them</li>
+          <li>Describe what props do and how to define them with an interface</li>
+          <li>Read the Button, SpaceCard, Screen, or LinkPreviewCard code and understand what each part does</li>
+          <li>Build a simple component that accepts props and renders them</li>
+        </ul>
+      </div>
+
+      <!-- ===== Exercise ===== -->
+      <div class="exercise">
+        <div class="exercise-title">Try it yourself</div>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Create a custom component to practice what you've learned.</p>
+        <ol>
+          <li><strong>Create a <code>Header</code> component</strong> in <code>src/components/Header.tsx</code>. It should accept a <code>title</code> prop (string) and an optional <code>subtitle</code> prop (string). Display the title in bold and the subtitle in a lighter color below it.</li>
+          <li><strong>Add a background color</strong> using <code>useTheme()</code> to get <code>palette.surface</code> as the background.</li>
+          <li><strong>Use it in a screen</strong> — import it into any screen and render <code>&lt;Header title="My Page" subtitle="Welcome back" /&gt;</code>.</li>
+          <li><strong>Bonus:</strong> Add an optional <code>rightAction</code> prop that renders a <code>Button</code> on the right side of the header.</li>
+        </ol>
+      </div>
+
+      <!-- ===== Navigation ===== -->
+      <nav class="chapter-nav">
+        <a href="05-hooks.html">
+          <span class="nav-label">Previous</span>
+          <span class="nav-title">Chapter 5 — Hooks &amp; State</span>
+        </a>
+        <a href="07-links.html" class="next">
+          <span class="nav-label">Next</span>
+          <span class="nav-title">Chapter 7 — Links Feature</span>
+        </a>
+      </nav>
+
+      <button id="mark-complete" data-chapter="6" class="copy-btn" style="margin-top:24px;padding:12px 24px;font-size:14px;">Mark Chapter Complete</button>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

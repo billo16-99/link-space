@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 9: Onboarding & Extras - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <button class="mobile-toggle">&#9776;</button>
+  <div class="sidebar-overlay"></div>
+
+  <div class="page-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1"><span class="num">1</span>Setup & Hello World</a>
+        <a href="02-structure.html" data-chapter="2"><span class="num">2</span>Project Structure</a>
+        <a href="03-navigation.html" data-chapter="3"><span class="num">3</span>Navigation</a>
+        <a href="04-database.html" data-chapter="4"><span class="num">4</span>Database</a>
+        <a href="05-hooks.html" data-chapter="5"><span class="num">5</span>Hooks & State</a>
+        <a href="06-components.html" data-chapter="6"><span class="num">6</span>Components</a>
+        <a href="07-links.html" data-chapter="7"><span class="num">7</span>Links Feature</a>
+        <a href="08-theme.html" data-chapter="8"><span class="num">8</span>Theme & Polish</a>
+        <a href="09-onboarding.html" data-chapter="9" class="active"><span class="num">9</span>Onboarding & Extras</a>
+        <a href="10-build.html" data-chapter="10"><span class="num">10</span>Build & Deploy</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="progress-bar"><div class="progress-fill" style="width: 90%"></div></div>
+
+      <div class="chapter-header">
+        <div class="chapter-badge">Chapter 9 of 10</div>
+        <h1>Onboarding & Extras</h1>
+        <p class="subtitle">Build the first-run experience, search, pinned links, and settings. This is what makes your app feel complete.</p>
+      </div>
+
+      <!-- Section 1 -->
+      <div class="section">
+        <h2>What You'll Learn</h2>
+        <ul>
+          <li>What onboarding is and why it matters</li>
+          <li>How to build a multi-step intro flow</li>
+          <li>How to persist "has the user seen this before?" state</li>
+          <li>Building the search screen</li>
+          <li>Building the settings screen</li>
+        </ul>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="section">
+        <h2>What is Onboarding?</h2>
+        <p>Onboarding is the <strong>first thing a new user sees</strong> when they open your app. It introduces the app, explains what it does, and guides the user through setup.</p>
+        <p>LinkSpice has <strong>5 onboarding screens</strong>:</p>
+        <ol>
+          <li><strong>Splash</strong> &mdash; Logo animation (1.5 seconds)</li>
+          <li><strong>Welcome</strong> &mdash; Floating cards + "Get Started" button</li>
+          <li><strong>Choose Spaces</strong> &mdash; Pick suggested categories</li>
+          <li><strong>Saving Demo</strong> &mdash; Animated visualization of how saving works</li>
+          <li><strong>Ready</strong> &mdash; "You're all set!" → go to home screen</li>
+        </ol>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#128161; Why this matters</div>
+          <p>Without onboarding, a new user opens the app and sees an empty screen. They don't know what to do. Onboarding teaches them in 30-60 seconds.</p>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="section">
+        <h2>The Splash Screen</h2>
+        <p>The splash screen shows the LinkSpice logo with a scale+fade animation, then automatically navigates to the welcome screen after 1.5 seconds.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/onboarding/splash.tsx</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
+import { useTheme } from '../../src/theme/ThemeContext';
+
+export default function Splash() {
+  const { palette } = useTheme();
+  const scale = useRef(new Animated.Value(0.8)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Animate: scale from 0.8 to 1, fade in
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: 1,
+        useNativeDriver: true,
+        damping: 12,
+        stiffness: 100,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // After 1.5 seconds, go to Welcome screen
+    const timer = setTimeout(() => {
+      router.replace('/onboarding/welcome');
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    &lt;View style={[styles.container, { backgroundColor: palette.background }]}&gt;
+      &lt;Animated.View style={[styles.logoWrap, {
+        transform: [{ scale }],
+        opacity
+      }]}&gt;
+        &lt;View style={[styles.logoIcon, { backgroundColor: palette.accent }]}&gt;
+          &lt;View style={styles.logoInner}&gt;
+            &lt;View style={[styles.logoDot, { backgroundColor: '#FFFFFF' }]} /&gt;
+          &lt;/View&gt;
+        &lt;/View&gt;
+        &lt;Animated.Text style={[styles.wordmark, {
+          color: palette.textPrimary, opacity
+        }]}&gt;
+          LinkSpice
+        &lt;/Animated.Text&gt;
+      &lt;/Animated.View&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#128161; Key concepts</div>
+          <p><code>useRef(new Animated.Value(0))</code> creates an animation value that persists across re-renders. <code>Animated.parallel</code> runs multiple animations at the same time. <code>router.replace</code> navigates without a back button (can't go back to splash).</p>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="section">
+        <h2>The Welcome Screen</h2>
+        <p>This is the main onboarding screen. It shows floating link cards that animate in, a headline, and two buttons: "Get Started" and "I already have an account".</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/onboarding/welcome.tsx (simplified)</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">function FloatingCard({ delay, x, y, color, icon }) {
+  const floatY = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Fade in after delay, then float up and down
+    Animated.sequence([
+      Animated.delay(delay),
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 1, duration: 500 }),
+        Animated.spring(floatY, { toValue: -8, damping: 12 }),
+      ]),
+    ]).start();
+
+    // Continuous floating loop
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatY, { toValue: -12, duration: 2000 }),
+        Animated.timing(floatY, { toValue: -4, duration: 2000 }),
+      ])
+    ).start();
+  }, []);
+
+  return (
+    &lt;Animated.View style={{ left: x, top: y, opacity,
+      transform: [{ translateY: floatY }] }}&gt;
+      &lt;View style={{ backgroundColor: color, ... }}&gt;
+        &lt;Ionicons name={icon} size={16} color="#FFFFFF" /&gt;
+      &lt;/View&gt;
+    &lt;/Animated.View&gt;
+  );
+}
+
+export default function Welcome() {
+  // ... render 4 FloatingCards with different delays and positions
+  // ... headline: "Your links, finally in their place."
+  // ... "Get Started" button → /onboarding/choose-spaces
+  // ... "I already have an account" → mark complete, go to /
+}</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#9989; How the animation works</div>
+          <p>Each card has a different <code>delay</code> (200ms, 400ms, 600ms, 800ms) so they appear one after another. The <code>Animated.loop</code> makes them float up and down forever.</p>
+        </div>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="section">
+        <h2>Persisting Onboarding State</h2>
+        <p>We need to remember if the user has already seen onboarding. If they close the app and reopen it, they should go straight to the home screen.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/lib/settings.ts</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import Storage from 'expo-sqlite/kv-store';
+
+const KEYS = {
+  onboardingCompleted: 'settings_onboarding_completed',
+} as const;
+
+export function getOnboardingCompleted(): boolean {
+  try {
+    const raw = Storage.getItemSync(KEYS.onboardingCompleted);
+    if (raw === 'true') return true;
+    if (raw === 'false') return false;
+  } catch {}
+  return false;  // Default: not completed
+}
+
+export function setOnboardingCompleted(v: boolean) {
+  try {
+    Storage.setItemSync(KEYS.onboardingCompleted, String(v));
+  } catch {}
+}</code></pre>
+        </div>
+
+        <p>Then in <code>_layout.tsx</code>, we check this value on startup:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/_layout.tsx (OnboardingGate)</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">function OnboardingGate() {
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    const completed = getOnboardingCompleted();
+    if (!completed) {
+      router.replace('/onboarding/splash');
+    }
+    setChecked(true);
+  }, []);
+
+  if (!checked) return null;  // Show nothing while checking
+
+  return &lt;Stack ... /&gt;;
+}</code></pre>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#128161; Why check on startup?</div>
+          <p>The app needs to decide immediately: show onboarding or show home? We check the stored value, redirect if needed, then render the app. The <code>if (!checked) return null</code> prevents a flash of the wrong screen.</p>
+        </div>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="section">
+        <h2>The Saving Demo Screen</h2>
+        <p>This screen shows an animated visualization of how LinkSpice works: a link card moves into a space box, then a checkmark appears.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/onboarding/saving.tsx (key part)</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">useEffect(() => {
+  // Phase 1: Show link card (0-1s)
+  // Phase 2: Move link to space (1-2.5s)
+  // Phase 3: Show checkmark (2.5-3.5s)
+
+  Animated.sequence([
+    Animated.timing(cardOpacity, { toValue: 1, duration: 600 }),
+    Animated.timing(cardX, { toValue: targetX, duration: 1000 }),
+    Animated.timing(checkOpacity, { toValue: 1, duration: 400 }),
+  ]).start();
+}, []);</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 7 -->
+      <div class="section">
+        <h2>The Ready Screen</h2>
+        <p>The final screen says "You're ready!" and has a button that marks onboarding complete and navigates to the home screen.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/onboarding/ready.tsx</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { setOnboardingCompleted } from '../../src/lib/settings';
+
+// When user taps "Start Saving":
+function handleStart() {
+  setOnboardingCompleted(true);  // Remember they finished
+  router.replace('/');            // Go to home (can't go back)
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 8 -->
+      <div class="section">
+        <h2>The Search Screen</h2>
+        <p>Search lets users find links by title, URL, or tags. It uses a text input and filters results in real time.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/search.tsx (key part)</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { useSearch } from '../src/hooks/useSpaces';
+
+export default function SearchScreen() {
+  const [query, setQuery] = useState('');
+  const [filter, setFilter] = useState('all');
+  const results = useSearch(query, filter);
+
+  return (
+    &lt;View&gt;
+      &lt;TextInput
+        placeholder="Search links..."
+        value={query}
+        onChangeText={setQuery}
+      /&gt;
+      {results.links.map(link =&gt; (
+        &lt;LinkPreviewCard key={link.id} link={link} /&gt;
+      ))}
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#9989; How search works</div>
+          <p>The <code>useSearch</code> hook calls <code>searchDb()</code> from the repositories, which runs a SQL query: <code>SELECT * FROM links WHERE title LIKE '%query%'</code>. It re-runs every time the query changes.</p>
+        </div>
+      </div>
+
+      <!-- Section 9 -->
+      <div class="section">
+        <h2>The Settings Screen</h2>
+        <p>Settings lets users configure defaults and preferences. All settings are stored using the same key-value store as onboarding.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/settings.tsx (key part)</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { getDefaultSpace, setDefaultSpace } from '../src/lib/settings';
+
+export default function SettingsScreen() {
+  const [defaultSpace, setDefault] = useState(getDefaultSpace());
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;Default Space&lt;/Text&gt;
+      &lt;SpacePicker
+        value={defaultSpace}
+        onChange={(id) => {
+          setDefault(id);
+          setDefaultSpace(id);
+        }}
+      /&gt;
+    &lt;/View&gt;
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Section 10 -->
+      <div class="section">
+        <h2>The Pinned Links Screen</h2>
+        <p>Pinned links are the user's most important links. They show in the Dynamic Island on the home screen and have their own dedicated screen.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/pinned.tsx (key part)</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { usePinnedLinks } from '../src/hooks/useSpaces';
+import { LinkPreviewCard } from '../src/components/LinkPreviewCard';
+
+export default function PinnedScreen() {
+  const pinnedLinks = usePinnedLinks();
+
+  return (
+    &lt;FlatList
+      data={pinnedLinks}
+      renderItem={({ item }) =&gt; (
+        &lt;LinkPreviewCard
+          link={item}
+          onPress={() =&gt; router.push(`/link-preview/${item.id}`)}
+        /&gt;
+      )}
+    /&gt;
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Verify -->
+      <div class="verify">
+        <div class="verify-title">&#9989; What You Should See</div>
+        <p>Open your app for the first time. You should see:</p>
+        <p>1. Splash screen with animated logo (1.5s)</p>
+        <p>2. Welcome screen with floating cards and "Get Started"</p>
+        <p>3. Choose Spaces screen with selectable chips</p>
+        <p>4. Saving Demo with animated visualization</p>
+        <p>5. Ready screen → tap "Start Saving" → home screen</p>
+        <p>Close and reopen the app. You should go straight to the home screen (no onboarding again).</p>
+      </div>
+
+      <!-- Exercise -->
+      <div class="exercise">
+        <div class="exercise-title">&#127891; Exercises</div>
+        <ol>
+          <li>Add a 6th onboarding screen between "Choose Spaces" and "Saving Demo" that explains tags</li>
+          <li>Change the splash screen duration from 1.5s to 2s</li>
+          <li>Add a "Skip" button to the Welcome screen that goes straight to the home screen</li>
+          <li>Add a new setting: "Show Thumbnails" toggle in the Settings screen</li>
+        </ol>
+      </div>
+
+      <!-- Nav -->
+      <div class="chapter-nav">
+        <a href="08-theme.html">
+          <span class="nav-label">&larr; Previous</span>
+          <span class="nav-title">Theme & Polish</span>
+        </a>
+        <a href="10-build.html" class="next">
+          <span class="nav-label">Next &rarr;</span>
+          <span class="nav-title">Build & Deploy</span>
+        </a>
+      </div>
+
+      <button id="mark-complete" data-chapter="9" class="copy-btn" style="margin-top: 24px; padding: 12px 24px; font-size: 14px;">Mark Chapter Complete</button>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

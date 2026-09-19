@@ -1,0 +1,459 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 3: Navigation - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/prism.css">
+  <script src="../js/prism.js"></script>
+</head>
+<body>
+  <div class="page-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1">1. Setup</a>
+        <a href="02-structure.html" data-chapter="2">2. Project Structure</a>
+        <a href="03-navigation.html" class="active" data-chapter="3">3. Navigation</a>
+        <a href="04-database.html" data-chapter="4">4. Database</a>
+        <a href="05-components.html" data-chapter="5">5. Components</a>
+        <a href="06-auth.html" data-chapter="6">6. Authentication</a>
+        <a href="07-styling.html" data-chapter="7">7. Styling</a>
+        <a href="08-api.html" data-chapter="8">8. API Routes</a>
+        <a href="09-deploy.html" data-chapter="9">9. Deploy</a>
+        <a href="10-recap.html" data-chapter="10">10. Recap</a>
+      </nav>
+      <button class="mobile-toggle" aria-label="Toggle navigation">&times;</button>
+      <div class="mobile-overlay"></div>
+    </aside>
+
+    <main class="main-content">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 30%"></div>
+      </div>
+
+      <div class="chapter-header">
+        <span class="chapter-badge">Chapter 3</span>
+        <h1>Navigation</h1>
+        <p class="subtitle">Learn how screens connect using expo-router's file-based routing and Stack navigation.</p>
+      </div>
+
+      <div class="section">
+        <h2>What You'll Learn</h2>
+        <p>In this chapter you will learn the basics of screen navigation in LinkSpice. Specifically:</p>
+        <ul>
+          <li><strong>expo-router</strong> — the routing library LinkSpice uses to manage screens.</li>
+          <li><strong>File-based routing</strong> — how dropping a file into the app/ folder automatically creates a screen.</li>
+          <li><strong>Stack navigation</strong> — how screens pile on top of each other, just like a deck of cards.</li>
+        </ul>
+        <p>By the end of this chapter you will have three screens — Home, About, and Profile — that you can move between on your phone.</p>
+      </div>
+
+      <div class="section">
+        <h2>How expo-router Works</h2>
+        <p>expo-router turns every file inside the app/ directory into a screen. No extra configuration, no route definitions — the file system <em>is</em> the router.</p>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why file-based routing?</div>
+          <p>You do not need to write a list of routes somewhere. If you create app/about.tsx, you automatically get a screen at /about. This is simple and hard to get wrong.</p>
+        </div>
+
+        <p>Here is what a typical app/ folder looks like in LinkSpice:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash">app/
+├── _layout.tsx        ← the root navigator (wrap everything)
+├── index.tsx          ← the home screen (/)
+├── about.tsx          ← the about screen (/about)
+├── profile/
+│   └── [id].tsx       ← dynamic screen (/profile/42)
+└── +not-found.tsx     ← 404 page</code></pre>
+        </div>
+
+        <p>Every file here is a route. The underscore prefix in _layout.tsx tells expo-router "this is a layout, not a screen." The brackets in [id].tsx mean the segment is dynamic — it can be any value.</p>
+      </div>
+      <div class="section">
+        <h2>_layout.tsx Explanation</h2>
+        <p>The root layout is the most important file in the entire app. It wraps <em>every</em> screen with the navigation stack, providers, and theme settings.</p>
+
+        <p>Here is the actual _layout.tsx from LinkSpice:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">app/_layout.tsx</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { Stack } from "expo-router";
+import { AuthProvider } from "../lib/auth-provider";
+import { useColorScheme } from "react-native";
+import { Colors } from "../constants/Colors";
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+
+  return (
+    &lt;AuthProvider&gt;
+      &lt;Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: Colors[colorScheme ?? "light"].background,
+          },
+          headerTintColor: Colors[colorScheme ?? "light"].text,
+        }}
+      &gt;
+        &lt;Stack.Screen name="index" options={{ title: "LinkSpice" }} /&gt;
+        &lt;Stack.Screen name="about" options={{ title: "About" }} /&gt;
+        &lt;Stack.Screen name="profile/[id]" options={{ title: "Profile" }} /&gt;
+      &lt;/Stack&gt;
+    &lt;/AuthProvider&gt;
+  );
+}</code></pre>
+        </div>
+
+        <p>Let us break this down piece by piece:</p>
+
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <h4><code>Stack</code> from expo-router</h4>
+            <p>This is the navigator. A <strong>Stack</strong> keeps screens in a pile — the newest one sits on top. When you go back, the top screen pops off and the one beneath becomes visible.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <h4><code>screenOptions</code></h4>
+            <p>These are the default styles applied to <em>every</em> screen. Here we set the header background color and text color based on whether the phone is in light or dark mode.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <h4><code>&lt;Stack.Screen&gt;</code> entries</h4>
+            <p>Each entry configures one screen. The name must match the filename in app/. The title shows up in the header bar at the top of the screen.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <h4><code>&lt;AuthProvider&gt;</code></h4>
+            <p>This wraps the entire navigation tree so that every screen can access the current user. You built this provider in Chapter 2.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Tip</div>
+          <p>You will modify _layout.tsx every time you add a new screen. Always add a matching Stack.Screen entry so the header title is set correctly.</p>
+        </div>
+      </div>
+      <div class="section">
+        <h2>Navigating Between Screens</h2>
+        <p>LinkSpice uses the router object from expo-router to move between screens. There are three main methods you need to know:</p>
+
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <h4><code>router.push(href)</code></h4>
+            <p>Adds a new screen on top of the current one. The user can press Back to return. Think of it as placing another card on the deck.</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Example</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code class="language-typescript">router.push("/about");</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <h4><code>router.back()</code></h4>
+            <p>Goes to the previous screen in the stack. Same as pressing the back arrow in the header.</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Example</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code class="language-typescript">router.back();</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <h4><code>router.replace(href)</code></h4>
+            <p>Swaps the current screen instead of stacking. The user cannot go back to the replaced screen. Use this for login flows or redirects.</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Example</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code class="language-typescript">router.replace("/");</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why three methods?</div>
+          <p><code>push</code> builds history. <code>back</code> steps through it. <code>replace</code> replaces the last entry. You will use push most of the time, back for back buttons, and replace when you do not want the user to return.</p>
+        </div>
+      </div>
+      <div class="section">
+        <h2>Building the Navigation</h2>
+        <p>Time to create three screens and wire them together. Follow each step carefully.</p>
+
+        <div class="step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <h4>Create the Home screen</h4>
+            <p>Open app/index.tsx and replace its contents with this:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">app/index.tsx</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code class="language-typescript">import { View, Text, Button, StyleSheet } from "react-native";
+import { router } from "expo-router";
+
+export default function HomeScreen() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.title}&gt;Welcome to LinkSpice&lt;/Text&gt;
+      &lt;Text style={styles.subtitle}&gt;Your links. Your space.&lt;/Text&gt;
+      &lt;View style={styles.buttons}&gt;
+        &lt;Button
+          title="Go to About"
+          onPress={() =&gt; router.push("/about")}
+        /&gt;
+        &lt;Button
+          title="Go to Profile"
+          onPress={() =&gt; router.push("/profile/1")}
+        /&gt;
+      &lt;/View&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  title: { fontSize: 28, fontWeight: "bold", marginBottom: 8 },
+  subtitle: { fontSize: 16, color: "#888", marginBottom: 24 },
+  buttons: { gap: 12 },
+});</code></pre>
+            </div>
+            <p>This is your home screen. It shows a greeting and two buttons — one that pushes to About and one that pushes to Profile.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <h4>Create the About screen</h4>
+            <p>Create a new file at app/about.tsx:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">app/about.tsx</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code class="language-typescript">import { View, Text, Button, StyleSheet } from "react-native";
+import { router } from "expo-router";
+
+export default function AboutScreen() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.title}&gt;About LinkSpice&lt;/Text&gt;
+      &lt;Text style={styles.body}&gt;
+        LinkSpice helps you collect and share your favorite links in one
+        beautiful space.
+      &lt;/Text&gt;
+      &lt;Button title="Go Back" onPress={() =&gt; router.back()} /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 12 },
+  body: { fontSize: 16, color: "#555", textAlign: "center", marginBottom: 24 },
+});</code></pre>
+            </div>
+            <p>This screen has a back button that calls router.back().</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <h4>Create the Profile screen</h4>
+            <p>Create a new file at app/profile/[id].tsx. The [id] part is a dynamic segment — we will cover it in detail in the next section.</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">app/profile/[id].tsx</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code class="language-typescript">import { View, Text, Button, StyleSheet } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+
+export default function ProfileScreen() {
+  const { id } = useLocalSearchParams&lt;{ id: string }&gt;();
+
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text style={styles.title}&gt;Profile&lt;/Text&gt;
+      &lt;Text style={styles.body}&gt;Viewing profile for user #{id}&lt;/Text&gt;
+      &lt;Button title="Go Back" onPress={() =&gt; router.back()} /&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 12 },
+  body: { fontSize: 16, color: "#555", marginBottom: 24 },
+});</code></pre>
+            </div>
+            <p>This screen reads the id from the URL and displays it. You can pass any number in the link and it will work.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <h4>Update _layout.tsx</h4>
+            <p>Make sure your root layout has all three screens listed. Use the code from the <em>_layout.tsx Explanation</em> section above.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <span class="step-num">5</span>
+          <div class="step-content">
+            <h4>Run the app</h4>
+            <p>Start the development server and test on your phone or emulator:</p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-filename">Terminal</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code class="language-bash">npx expo start</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <h2>URL Parameters</h2>
+        <p>The Profile screen uses a <strong>dynamic route</strong>. The file [id].tsx tells expo-router that the /profile/ segment can contain any value.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">URL structure</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-bash">/profile/1    ← id = "1"
+/profile/42   ← id = "42"
+/profile/abc  ← id = "abc"</code></pre>
+        </div>
+
+        <p>To read the value inside the screen, use the useLocalSearchParams hook from expo-router:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Reading URL params</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-typescript">const { id } = useLocalSearchParams&lt;{ id: string }&gt;();</code></pre>
+        </div>
+
+        <p>You can pass parameters from anywhere by including them in the URL:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Pushing with a parameter</span>
+            <button class="copy-btn">Copy</button>
+          </div>
+          <pre><code class="language-typescript">router.push("/profile/42");</code></pre>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">Warning</div>
+          <p>The id value is always a string. If you need a number, convert it yourself with Number(id) or parseInt(id, 10). expo-router never converts types for you.</p>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Tip</div>
+          <p>You can add multiple dynamic segments by creating files like app/user/[userId]/post/[postId].tsx. Each bracketed segment becomes a parameter you can read.</p>
+        </div>
+      </div>
+      <div class="section">
+        <div class="verify">
+          <div class="verify-title">Verify</div>
+          <p>Open the app on your phone and confirm these behaviours:</p>
+          <ul>
+            <li>Home screen shows "Welcome to LinkSpice" with two buttons.</li>
+            <li>Tapping "Go to About" slides to the About screen. The back arrow in the header returns you to Home.</li>
+            <li>Tapping "Go to Profile" slides to the Profile screen showing "Viewing profile for user #1".</li>
+            <li>Pressing the back button on Profile returns to Home.</li>
+            <li>If you change the number in router.push("/profile/99"), the Profile screen updates accordingly.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="exercise">
+          <div class="exercise-title">Exercise</div>
+          <p>Challenge yourself — add a fourth screen called <strong>Settings</strong>.</p>
+          <ol>
+            <li>Create a new file at app/settings.tsx.</li>
+            <li>Add a <code>&lt;Stack.Screen name="settings" options={{ title: "Settings" }} /&gt;</code> entry in _layout.tsx.</li>
+            <li>Add a button on the Home screen that navigates to /settings.</li>
+            <li>Put something unique on the Settings screen — maybe a toggle or a list of options.</li>
+          </ol>
+          <p>When you are done, you should be able to navigate to all four screens without errors.</p>
+        </div>
+      </div>
+
+      <div class="chapter-nav">
+        <a href="02-structure.html" class="nav-label">Previous</a>
+        <div class="nav-title">
+          <a href="02-structure.html">Chapter 2: Project Structure</a>
+        </div>
+        <a href="04-database.html" class="nav-label">Next</a>
+        <div class="nav-title">
+          <a href="04-database.html">Chapter 4: Database</a>
+        </div>
+      </div>
+
+      <div class="section">
+        <button class="complete-btn" data-chapter="3">Mark Complete</button>
+      </div>
+
+    </main>
+  </div>
+  <script src="../js/main.js"></script>
+</body>
+</html>

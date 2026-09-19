@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 2: Project Structure - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+  <button class="mobile-toggle" id="mobile-toggle">&#9776;</button>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width: 20%"></div>
+  </div>
+
+  <div class="page-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1"><span class="num">01</span>Setup &amp; Hello World</a>
+        <a href="02-structure.html" class="active" data-chapter="2"><span class="num">02</span>Project Structure</a>
+        <a href="03-navigation.html" data-chapter="3"><span class="num">03</span>Navigation</a>
+        <a href="04-database.html" data-chapter="4"><span class="num">04</span>Database</a>
+        <a href="05-hooks.html" data-chapter="5"><span class="num">05</span>Hooks &amp; State</a>
+        <a href="06-components.html" data-chapter="6"><span class="num">06</span>Components</a>
+        <a href="07-links.html" data-chapter="7"><span class="num">07</span>Links Feature</a>
+        <a href="08-theme.html" data-chapter="8"><span class="num">08</span>Theme &amp; Polish</a>
+        <a href="09-onboarding.html" data-chapter="9"><span class="num">09</span>Onboarding &amp; Extras</a>
+        <a href="10-build.html" data-chapter="10"><span class="num">10</span>Build &amp; Deploy</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="chapter-header">
+        <span class="chapter-badge">Chapter 2</span>
+        <h1>Project Structure</h1>
+        <p class="subtitle">Understand every folder and file in the LinkSpice app. Know what goes where and why.</p>
+      </div>
+
+      <!-- ===== What You'll Learn ===== -->
+      <section class="section" id="what-youll-learn">
+        <h2>What You'll Learn</h2>
+        <p>In this chapter, you'll understand:</p>
+        <ul>
+          <li><strong>What a project structure is</strong> — the layout of folders and files in your app</li>
+          <li><strong>Why files are organized in folders</strong> — keeping things tidy so you can find them</li>
+          <li><strong>What each folder does</strong> — the job of every directory in LinkSpice</li>
+        </ul>
+      </section>
+
+      <!-- ===== The Big Picture ===== -->
+      <section class="section" id="big-picture">
+        <h2>The Big Picture</h2>
+        <p>Think of a project structure like the floor plan of a house. Every room has a purpose: the kitchen is for cooking, the bedroom is for sleeping. Code works the same way — each folder has a job.</p>
+        <p>Here is the full folder tree of the LinkSpice app:</p>
+
+        <div class="file-tree">
+<span class="folder">Link-space-app-code/</span>
+├── <span class="folder">app/</span> <span class="desc">← Screens (each file = one screen)</span>
+│   ├── <span class="file">_layout.tsx</span> <span class="desc">← Root navigator</span>
+│   ├── <span class="file">index.tsx</span> <span class="desc">← Home screen</span>
+│   ├── <span class="file">search.tsx</span> <span class="desc">← Search screen</span>
+│   ├── <span class="file">settings.tsx</span> <span class="desc">← Settings screen</span>
+│   ├── <span class="file">pinned.tsx</span> <span class="desc">← Pinned links screen</span>
+│   ├── <span class="file">recent.tsx</span> <span class="desc">← Recent links screen</span>
+│   ├── <span class="file">profile.tsx</span> <span class="desc">← Profile screen</span>
+│   ├── <span class="file">add-link.tsx</span> <span class="desc">← Add link screen</span>
+│   ├── <span class="file">create-space.tsx</span> <span class="desc">← Create space screen</span>
+│   ├── <span class="folder">space/</span>
+│   │   └── <span class="file">[id].tsx</span> <span class="desc">← Space detail screen</span>
+│   ├── <span class="folder">edit-link/</span>
+│   │   └── <span class="file">[id].tsx</span> <span class="desc">← Edit link screen</span>
+│   ├── <span class="folder">link-preview/</span>
+│   │   └── <span class="file">[id].tsx</span> <span class="desc">← Link preview screen</span>
+│   └── <span class="folder">onboarding/</span>
+│       ├── <span class="file">splash.tsx</span>
+│       ├── <span class="file">welcome.tsx</span>
+│       ├── <span class="file">choose-spaces.tsx</span>
+│       ├── <span class="file">saving.tsx</span>
+│       └── <span class="file">ready.tsx</span>
+├── <span class="folder">src/</span> <span class="desc">← Logic (components, database, hooks)</span>
+│   ├── <span class="file">types.ts</span> <span class="desc">← Data shapes (Space, Link)</span>
+│   ├── <span class="folder">components/</span> <span class="desc">← Reusable UI pieces</span>
+│   │   ├── <span class="file">Button.tsx</span>
+│   │   ├── <span class="file">SpaceCard.tsx</span>
+│   │   ├── <span class="file">LinkCard.tsx</span>
+│   │   ├── <span class="file">LinkPreviewCard.tsx</span>
+│   │   ├── <span class="file">AddLinkPanel.tsx</span>
+│   │   ├── <span class="file">DynamicIsland.tsx</span>
+│   │   ├── <span class="file">SearchBar.tsx</span>
+│   │   ├── <span class="file">QuickActions.tsx</span>
+│   │   └── <span class="file">...</span> <span class="desc">(more components)</span>
+│   ├── <span class="folder">db/</span> <span class="desc">← Database layer</span>
+│   │   ├── <span class="file">schema.ts</span> <span class="desc">← Table definitions</span>
+│   │   ├── <span class="file">db.ts</span> <span class="desc">← Database connection</span>
+│   │   ├── <span class="file">expo-client.ts</span> <span class="desc">← SQLite wrapper</span>
+│   │   ├── <span class="file">rows.ts</span> <span class="desc">← Row mapping</span>
+│   │   └── <span class="file">DataProvider.tsx</span>
+│   ├── <span class="folder">repositories/</span> <span class="desc">← Data operations</span>
+│   │   ├── <span class="file">links.ts</span> <span class="desc">← Link CRUD</span>
+│   │   ├── <span class="file">spaces.ts</span> <span class="desc">← Space CRUD</span>
+│   │   └── <span class="file">search.ts</span> <span class="desc">← Search logic</span>
+│   ├── <span class="folder">hooks/</span> <span class="desc">← React hooks</span>
+│   │   ├── <span class="file">useLinks.ts</span>
+│   │   ├── <span class="file">useSpaces.ts</span>
+│   │   └── <span class="file">useResponsive.ts</span>
+│   ├── <span class="folder">lib/</span> <span class="desc">← Utility functions</span>
+│   │   ├── <span class="file">url.ts</span>
+│   │   ├── <span class="file">format.ts</span>
+│   │   ├── <span class="file">id.ts</span>
+│   │   ├── <span class="file">brand.ts</span>
+│   │   ├── <span class="file">color.ts</span>
+│   │   ├── <span class="file">metadata.ts</span>
+│   │   ├── <span class="file">settings.ts</span>
+│   │   └── <span class="file">recentSearches.ts</span>
+│   ├── <span class="folder">store/</span>
+│   │   └── <span class="file">events.ts</span> <span class="desc">← Event system</span>
+│   └── <span class="folder">theme/</span>
+│       ├── <span class="file">tokens.ts</span> <span class="desc">← Colors, spacing, typography</span>
+│       └── <span class="file">ThemeContext.tsx</span> <span class="desc">← Theme provider</span>
+├── <span class="folder">assets/</span> <span class="desc">← Images, icons</span>
+├── <span class="file">app.json</span> <span class="desc">← Expo config</span>
+├── <span class="file">package.json</span> <span class="desc">← Dependencies</span>
+├── <span class="file">tsconfig.json</span> <span class="desc">← TypeScript config</span>
+└── <span class="file">eas.json</span> <span class="desc">← Build config</span>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why does this matter?</div>
+          <p>When your app has 50+ files, you need to know where to look. This structure means you will always find things quickly — screens in <code>app/</code>, logic in <code>src/</code>.</p>
+        </div>
+      </section>
+
+      <!-- ===== app/ folder ===== -->
+      <section class="section" id="app-folder">
+        <h2>The <code>app/</code> Folder (Screens)</h2>
+        <p>The <code>app/</code> folder is where every screen lives. Each file in here becomes a screen in the app — that is called <strong>file-based routing</strong>.</p>
+        <p>It works like this:</p>
+        <ul>
+          <li><code>app/index.tsx</code> becomes the Home screen</li>
+          <li><code>app/search.tsx</code> becomes the Search screen</li>
+          <li><code>app/settings.tsx</code> becomes the Settings screen</li>
+        </ul>
+        <p>See the pattern? The filename becomes the screen name.</p>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">About <code>_layout.tsx</code></div>
+          <p>This file starts with an underscore because it is special. It does not become a screen — instead, it wraps all other screens and provides the navigation structure (like a tab bar at the bottom).</p>
+        </div>
+
+        <p>Some folders inside <code>app/</code> have a <code>[id].tsx</code> file. The square brackets mean the ID is dynamic — it changes based on what the user is viewing. For example, <code>app/space/[id].tsx</code> handles every space, not just one.</p>
+      </section>
+
+      <!-- ===== src/ folder ===== -->
+      <section class="section" id="src-folder">
+        <h2>The <code>src/</code> Folder (Logic)</h2>
+        <p>The <code>src/</code> folder holds all the "brain" of the app — the data, components, database, and helper functions. It is everything the app needs to actually <em>work</em>, separate from what the user sees.</p>
+        <p>Here is the breakdown:</p>
+        <ul>
+          <li><code>components/</code> — Reusable UI pieces (buttons, cards, inputs)</li>
+          <li><code>db/</code> — Database definitions and connection</li>
+          <li><code>repositories/</code> — Data operations (save, load, delete)</li>
+          <li><code>hooks/</code> — Connectors between database and screens</li>
+          <li><code>lib/</code> — Utility helpers (format dates, generate IDs, etc.)</li>
+          <li><code>store/</code> — Event system for app-wide communication</li>
+          <li><code>theme/</code> — Colors, spacing, typography definitions</li>
+        </ul>
+      </section>
+
+      <!-- ===== src/components/ ===== -->
+      <section class="section" id="components-folder">
+        <h2><code>src/components/</code> (UI Building Blocks)</h2>
+        <p>A <strong>component</strong> is a reusable piece of the user interface. Think of it like LEGO bricks — you build small pieces, then snap them together to make something bigger.</p>
+        <p>For example, a Button component can be reused on every screen instead of rewriting the button code each time.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/components/Button.tsx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+
+interface ButtonProps {
+  title: string;
+  onPress: () =&gt; void;
+}
+
+export function Button({ title, onPress }: ButtonProps) {
+  return (
+    &lt;TouchableOpacity style={styles.button} onPress={onPress}&gt;
+      &lt;Text style={styles.text}&gt;{title}&lt;/Text&gt;
+    &lt;/TouchableOpacity&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: '#a56bff',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});</code></pre>
+        </div>
+
+        <p>This component takes a <code>title</code> and an <code>onPress</code> function, and renders a styled button. Any screen can use it by importing <code>Button</code> and passing props.</p>
+      </section>
+
+      <!-- ===== src/db/ ===== -->
+      <section class="section" id="db-folder">
+        <h2><code>src/db/</code> (Database)</h2>
+        <p>A <strong>database</strong> is like a spreadsheet that lives on the phone. It stores all the user's data — links, spaces, and settings — so it is still there when the app closes and reopens.</p>
+
+        <div class="callout callout-why">
+          <div class="callout-title">Why not just store data in variables?</div>
+          <p>Variables disappear when the app closes. A database saves data to the phone's storage permanently. LinkSpice uses <strong>SQLite</strong>, a lightweight database that runs right on the device.</p>
+        </div>
+
+        <p>The key file is <code>schema.ts</code>, which defines the "tables" — think of tables as different sheets in a spreadsheet:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/db/schema.ts</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export const CREATE_SPACES_TABLE = `
+  CREATE TABLE IF NOT EXISTS spaces (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    icon TEXT,
+    color TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  )
+`;
+
+export const CREATE_LINKS_TABLE = `
+  CREATE TABLE IF NOT EXISTS links (
+    id TEXT PRIMARY KEY,
+    url TEXT NOT NULL,
+    title TEXT,
+    description TEXT,
+    space_id TEXT,
+    is_pinned INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (space_id) REFERENCES spaces(id)
+  )
+`;</code></pre>
+        </div>
+
+        <p>This says: "Create a <code>spaces</code> table with columns for id, name, icon, color, and creation date. Create a <code>links</code> table with columns for id, URL, title, description, and which space it belongs to."</p>
+      </section>
+
+      <!-- ===== src/repositories/ ===== -->
+      <section class="section" id="repositories-folder">
+        <h2><code>src/repositories/</code> (Data Operations)</h2>
+        <p>Repositories handle <strong>CRUD</strong> — the four things you can do with data:</p>
+        <ol>
+          <li><strong>Create</strong> — Add a new link or space</li>
+          <li><strong>Read</strong> — Load links and spaces from the database</li>
+          <li><strong>Update</strong> — Edit an existing link or space</li>
+          <li><strong>Delete</strong> — Remove a link or space</li>
+        </ol>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/repositories/links.ts (simplified)</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export async function getLinks(spaceId: string) {
+  const rows = await db.getAllAsync(
+    'SELECT * FROM links WHERE space_id = ? ORDER BY created_at DESC',
+    [spaceId]
+  );
+  return rows.map(mapRowToLink);
+}
+
+export async function createLink(link: NewLink) {
+  await db.runAsync(
+    'INSERT INTO links (id, url, title, space_id) VALUES (?, ?, ?, ?)',
+    [link.id, link.url, link.title, link.spaceId]
+  );
+}
+
+export async function deleteLink(id: string) {
+  await db.runAsync('DELETE FROM links WHERE id = ?', [id]);
+}</code></pre>
+        </div>
+      </section>
+
+      <!-- ===== src/hooks/ ===== -->
+      <section class="section" id="hooks-folder">
+        <h2><code>src/hooks/</code> (Connectors)</h2>
+        <p><strong>Hooks</strong> connect the database to the screen. They sit in the middle: they fetch data from the database and hand it to the screen so it can display it.</p>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">Think of hooks as waiters</div>
+          <p>The screen orders data ("bring me all links"), the hook goes to the database, gets the data, and brings it back. The screen does not talk to the database directly.</p>
+        </div>
+
+        <p>When data changes in the database, the hook automatically updates the screen. This is why when you add a link, it appears instantly without restarting the app.</p>
+      </section>
+
+      <!-- ===== src/theme/ ===== -->
+      <section class="section" id="theme-folder">
+        <h2><code>src/theme/</code> (Colors &amp; Style)</h2>
+        <p>The <code>theme/</code> folder is the <strong>design system</strong> — the single source of truth for every color, font size, and spacing value in the app.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">src/theme/tokens.ts</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-typescript">export const tokens = {
+  colors: {
+    accent: '#a56bff',
+    background: '#0a0a0c',
+    card: '#1a1a1e',
+    text: '#e4e4e7',
+    textSecondary: '#92959f',
+    border: '#2a2a30',
+    green: '#27c76f',
+    red: '#ff5c68',
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+  },
+  fontSize: {
+    sm: 13,
+    md: 15,
+    lg: 18,
+    xl: 24,
+  },
+};</code></pre>
+        </div>
+
+        <p>Instead of writing <code>"#a56bff"</code> everywhere, components use <code>tokens.colors.accent</code>. If you ever want to change the accent color, you change it in one place and it updates everywhere.</p>
+      </section>
+
+      <!-- ===== Key Files ===== -->
+      <section class="section" id="key-files">
+        <h2>Key Files</h2>
+        <p>At the root of the project, there are a few important config files:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">package.json</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code class="language-json">{
+  "name": "link-space",
+  "version": "1.0.0",
+  "dependencies": {
+    "expo": "~57.0.24",
+    "expo-router": "~57.0.22",
+    "expo-sqlite": "~57.0.3",
+    "react": "19.2.3",
+    "react-native": "0.86.3"
+  }
+}</code></pre>
+        </div>
+
+        <p>This file lists every library the project depends on. The key ones are:</p>
+        <ul>
+          <li><strong>expo</strong> — The framework for building the app</li>
+          <li><strong>expo-router</strong> — File-based navigation (the <code>app/</code> folder system)</li>
+          <li><strong>expo-sqlite</strong> — The SQLite database on the phone</li>
+          <li><strong>react</strong> and <strong>react-native</strong> — The UI library and mobile runtime</li>
+        </ul>
+      </section>
+
+      <!-- ===== Verify ===== -->
+      <div class="verify">
+        <div class="verify-title">Verify your understanding</div>
+        <p>Before moving on, make sure you can:</p>
+        <ul>
+          <li>Open any file and know what folder it belongs to</li>
+          <li>Explain what each folder does in your own words</li>
+        </ul>
+      </div>
+
+      <!-- ===== Exercise ===== -->
+      <div class="exercise">
+        <div class="exercise-title">Try it yourself</div>
+        <ol>
+          <li>Open <code>src/types.ts</code> and find the <code>Space</code> type. What fields does it have?</li>
+          <li>Open <code>app/index.tsx</code> and find where it imports <code>SpaceCard</code></li>
+          <li>Count how many screens are in the <code>app/</code> folder (hint: count the <code>.tsx</code> files)</li>
+        </ol>
+      </div>
+
+      <!-- ===== Navigation ===== -->
+      <nav class="chapter-nav">
+        <a href="01-setup.html">
+          <span class="nav-label">Previous</span>
+          <span class="nav-title">Chapter 1 — Setup &amp; Hello World</span>
+        </a>
+        <a href="03-navigation.html" class="next">
+          <span class="nav-label">Next</span>
+          <span class="nav-title">Chapter 3 — Navigation</span>
+        </a>
+      </nav>
+
+      <button id="mark-complete" data-chapter="2" class="copy-btn" style="margin-top:24px;padding:12px 24px;font-size:14px;">Mark Chapter Complete</button>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

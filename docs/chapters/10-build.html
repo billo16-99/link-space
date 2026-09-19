@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 10: Build & Deploy - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <button class="mobile-toggle">&#9776;</button>
+  <div class="sidebar-overlay"></div>
+
+  <div class="page-wrapper">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1"><span class="num">1</span>Setup & Hello World</a>
+        <a href="02-structure.html" data-chapter="2"><span class="num">2</span>Project Structure</a>
+        <a href="03-navigation.html" data-chapter="3"><span class="num">3</span>Navigation</a>
+        <a href="04-database.html" data-chapter="4"><span class="num">4</span>Database</a>
+        <a href="05-hooks.html" data-chapter="5"><span class="num">5</span>Hooks & State</a>
+        <a href="06-components.html" data-chapter="6"><span class="num">6</span>Components</a>
+        <a href="07-links.html" data-chapter="7"><span class="num">7</span>Links Feature</a>
+        <a href="08-theme.html" data-chapter="8"><span class="num">8</span>Theme & Polish</a>
+        <a href="09-onboarding.html" data-chapter="9"><span class="num">9</span>Onboarding & Extras</a>
+        <a href="10-build.html" data-chapter="10" class="active"><span class="num">10</span>Build & Deploy</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div>
+
+      <div class="chapter-header">
+        <div class="chapter-badge">Chapter 10 of 10</div>
+        <h1>Build & Deploy</h1>
+        <p class="subtitle">The final chapter. Build an APK file anyone can install, push your code to GitHub, and share your app with the world.</p>
+      </div>
+
+      <!-- Section 1 -->
+      <div class="section">
+        <h2>What You'll Learn</h2>
+        <ul>
+          <li>How to build an Android APK file</li>
+          <li>How to push code to GitHub</li>
+          <li>How to create a release with a download link</li>
+          <li>How to share your app with anyone</li>
+        </ul>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="section">
+        <h2>Step 1: Install EAS CLI</h2>
+        <p>EAS (Expo Application Services) is Expo's build service. It compiles your app in the cloud and gives you a downloadable APK file.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">npm install -g eas-cli</code></pre>
+        </div>
+
+        <p>Then log in to your Expo account:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">eas login</code></pre>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#9989; Don't have an account?</div>
+          <p>Go to <a href="https://expo.dev" target="_blank">expo.dev</a> and create a free account. It takes 30 seconds.</p>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="section">
+        <h2>Step 2: Configure the Build</h2>
+        <p>Create an <code>eas.json</code> file in your project root:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">eas.json</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-json">{
+  "cli": {
+    "version": ">= 16.0.0"
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "distribution": "internal"
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      }
+    }
+  }
+}</code></pre>
+        </div>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#128161; APK vs AAB</div>
+          <p><strong>APK</strong> = a file anyone can install directly. <strong>AAB</strong> = Google Play Store format. We use APK for direct sharing.</p>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="section">
+        <h2>Step 3: Initialize EAS Project</h2>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">eas init --non-interactive --force</code></pre>
+        </div>
+
+        <p>This links your project to your Expo account. It creates a project on expo.dev and adds the project ID to your <code>app.json</code>.</p>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="section">
+        <h2>Step 4: Build the APK</h2>
+        <p>This is the big moment. Run this command and wait 10-15 minutes:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">eas build --platform android --profile preview --non-interactive</code></pre>
+        </div>
+
+        <p>What happens:</p>
+        <ol>
+          <li>EAS compresses your project files</li>
+          <li>Uploads them to Expo's cloud servers</li>
+          <li>Compiles the app (like baking a cake)</li>
+          <li>Gives you a download URL when done</li>
+        </ol>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888;&#65039; Takes 10-15 minutes</div>
+          <p>Don't close the terminal. You'll see a URL when it's done. You can also monitor it at <a href="https://expo.dev" target="_blank">expo.dev</a> under "Builds".</p>
+        </div>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="section">
+        <h2>Step 5: Download the APK</h2>
+        <p>When the build finishes, you'll see a URL like:</p>
+        <p><code>https://expo.dev/artifacts/eas/CR9-0UYPFY4lmtbNyPYjGYJdgiOa6gRQ2hGwblsrYEI.apk</code></p>
+        <p>Download this file. It's your app! Anyone with an Android phone can install it.</p>
+
+        <p>To install on your phone:</p>
+        <ol>
+          <li>Transfer the APK to your phone (email, USB, cloud storage)</li>
+          <li>Open the APK file on your phone</li>
+          <li>Allow "Install from unknown sources" if prompted</li>
+          <li>Open LinkSpice!</li>
+        </ol>
+      </div>
+
+      <!-- Section 7 -->
+      <div class="section">
+        <h2>Step 6: Push to GitHub</h2>
+        <p>GitHub is where developers store their code. It's like Google Drive for code.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash"># Install GitHub CLI (one time)
+winget install GitHub.cli
+
+# Log in
+gh auth login
+
+# Create repo and push
+git add -A
+git commit -m "LinkSpice v1.0.0"
+gh repo create link-space --public --source=. --push</code></pre>
+        </div>
+
+        <p>Your code is now on GitHub at <code>https://github.com/yourusername/link-space</code>.</p>
+      </div>
+
+      <!-- Section 8 -->
+      <div class="section">
+        <h2>Step 7: Create a Release</h2>
+        <p>A GitHub Release lets people download your APK with one click.</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">gh release create v1.0.0 LinkSpice-v1.0.0.apk \
+  --title "LinkSpice v1.0.0" \
+  --notes "Save, organize, and find everything you want to come back to."</code></pre>
+        </div>
+
+        <p>Now anyone can go to your release page and download the APK:</p>
+        <p><code>https://github.com/yourusername/link-space/releases/tag/v1.0.0</code></p>
+      </div>
+
+      <!-- Section 9 -->
+      <div class="section">
+        <h2>Step 8: Enable GitHub Pages (Optional)</h2>
+        <p>If you want a website for your tutorial or docs, enable GitHub Pages:</p>
+        <ol>
+          <li>Go to your repo on GitHub</li>
+          <li>Settings → Pages</li>
+          <li>Source: Deploy from a branch</li>
+          <li>Branch: main, folder: /docs</li>
+          <li>Save</li>
+        </ol>
+        <p>Your site is live at <code>https://yourusername.github.io/link-space/</code></p>
+      </div>
+
+      <!-- Verify -->
+      <div class="verify">
+        <div class="verify-title">&#9989; What You Should Have</div>
+        <p>1. An APK file that installs on any Android phone</p>
+        <p>2. A GitHub repo with all your code</p>
+        <p>3. A release page where anyone can download the APK</p>
+        <p>4. (Optional) A tutorial website on GitHub Pages</p>
+        <p><strong>You built a complete mobile app from scratch. Congratulations!</strong></p>
+      </div>
+
+      <!-- Congratulations -->
+      <div class="callout callout-tip">
+        <div class="callout-title">&#127881; You did it!</div>
+        <p>You've learned React Native, Expo, SQLite, navigation, state management, components, theming, and deployment. You built a real app that people can download and use. This is a huge accomplishment.</p>
+        <p>Keep building. Every app you make will be better than the last.</p>
+      </div>
+
+      <!-- Exercise -->
+      <div class="exercise">
+        <div class="exercise-title">&#127891; Final Challenges</div>
+        <ol>
+          <li>Change the app icon in <code>assets/icon.png</code> and rebuild</li>
+          <li>Add a "Share" button that sends the APK link to friends</li>
+          <li>Build an iOS version (requires Apple Developer account, $99/year)</li>
+          <li>Add your app to the Google Play Store ($25 one-time fee)</li>
+        </ol>
+      </div>
+
+      <!-- Nav -->
+      <div class="chapter-nav">
+        <a href="09-onboarding.html">
+          <span class="nav-label">&larr; Previous</span>
+          <span class="nav-title">Onboarding & Extras</span>
+        </a>
+        <a href="../index.html" class="next">
+          <span class="nav-label">Back to</span>
+          <span class="nav-title">Home &rarr;</span>
+        </a>
+      </div>
+
+      <button id="mark-complete" data-chapter="10" class="copy-btn" style="margin-top: 24px; padding: 12px 24px; font-size: 14px;">Mark Chapter Complete</button>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 1: Setup & Hello World - How to Code LinkSpice</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+
+  <!-- Mobile sidebar toggle -->
+  <button class="mobile-toggle" aria-label="Toggle navigation">&#9776;</button>
+  <div class="sidebar-overlay"></div>
+
+  <!-- Progress bar -->
+  <div class="progress-bar">
+    <div class="progress-fill" style="width: 10%"></div>
+  </div>
+
+  <div class="page-wrapper">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>How to Code LinkSpice</h2>
+        <p>10 chapters to a working app</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="01-setup.html" data-chapter="1" class="active">
+          <span class="num">1</span> Setup &amp; Hello World
+        </a>
+        <a href="02-structure.html" data-chapter="2">
+          <span class="num">2</span> Project Structure
+        </a>
+        <a href="03-navigation.html" data-chapter="3">
+          <span class="num">3</span> Navigation
+        </a>
+        <a href="04-database.html" data-chapter="4">
+          <span class="num">4</span> Database
+        </a>
+        <a href="05-hooks.html" data-chapter="5">
+          <span class="num">5</span> Hooks &amp; State
+        </a>
+        <a href="06-components.html" data-chapter="6">
+          <span class="num">6</span> Components
+        </a>
+        <a href="07-links.html" data-chapter="7">
+          <span class="num">7</span> Links Feature
+        </a>
+        <a href="08-theme.html" data-chapter="8">
+          <span class="num">8</span> Theme &amp; Polish
+        </a>
+        <a href="09-onboarding.html" data-chapter="9">
+          <span class="num">9</span> Onboarding &amp; Extras
+        </a>
+        <a href="10-build.html" data-chapter="10">
+          <span class="num">10</span> Build &amp; Deploy
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+
+      <!-- Chapter Header -->
+      <div class="chapter-header">
+        <div class="chapter-badge">Chapter 1</div>
+        <h1>Setup &amp; Hello World</h1>
+        <p class="subtitle">Install your tools, create your first project, and see it run on your phone. No coding experience required.</p>
+      </div>
+
+      <!-- Section: What You'll Learn -->
+      <div class="section" id="what-youll-learn">
+        <h2>What You'll Learn</h2>
+        <p>Welcome to your very first coding lesson! Before we write any code, let's understand what we're about to do.</p>
+
+        <h3>What is programming?</h3>
+        <p>Programming is giving instructions to a computer. Just like a recipe tells you how to cook a meal, code tells your phone or computer what to do. When you write code, you're creating a set of step-by-step instructions that a machine can follow.</p>
+
+        <h3>What is React Native?</h3>
+        <p>React Native is a tool that lets you write code once and run it on both iPhone and Android. Instead of building two separate apps, you write one set of code and React Native translates it for each phone. It's like writing a letter that works in any language.</p>
+
+        <h3>What is Expo?</h3>
+        <p>Expo is a set of tools built on top of React Native that makes everything easier. It handles all the complicated setup so you can focus on writing your app. Think of Expo as the easy mode for building mobile apps.</p>
+
+        <h3>What you'll build</h3>
+        <p>By the end of all 10 chapters, you'll have a fully working app called <strong>LinkSpice</strong> on your phone. You'll be able to save links, organize them into spaces, switch between dark and light themes, and more. But right now, we're just going to get a simple "Hello World" message to show up on your phone. Let's go!</p>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#9889; Why this matters</div>
+          <p>You can't build a house without tools. This chapter sets up the exact tools you need: a code editor to write code, a phone app to preview it, and a project to work in. Every chapter after this builds on what you set up right now.</p>
+        </div>
+      </div>
+
+      <!-- Step 1: Install Node.js -->
+      <div class="section" id="install-node">
+        <h2>Step 1 &mdash; Install Node.js</h2>
+        <p>Node.js is the engine that runs your code on your computer. It lets you execute JavaScript (the programming language we'll use) outside of a web browser. You need it installed before anything else will work.</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Go to nodejs.org</h4>
+            <p>Open your web browser and visit <a href="https://nodejs.org" target="_blank">https://nodejs.org</a>. You'll see two big download buttons.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Download the LTS version</h4>
+            <p>Click the button that says <strong>LTS</strong> (Long Term Support). This is the stable, recommended version. The other version (Current) might have bugs since it's brand new. Always pick LTS when you're starting out.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Run the installer</h4>
+            <p>Once the download finishes, open the file. A setup wizard will appear. You can safely click <strong>Next</strong> through every screen. You don't need to change any settings. Just keep clicking Next, then Install, then Finish.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Verify it worked</h4>
+            <p>Open your computer's terminal (Terminal on Mac, Command Prompt or PowerShell on Windows) and type this command:</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">node --version</code></pre>
+        </div>
+
+        <p>If you see a version number like <code>v20.11.0</code>, Node.js is installed correctly. If you see an error like "node is not recognized", close your terminal and open a new one. If it still doesn't work, try restarting your computer.</p>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#10004; Tip</div>
+          <p>The version number doesn't need to match exactly. Any version starting with v18 or higher is fine. Don't worry about which version you have.</p>
+        </div>
+      </div>
+
+      <!-- Step 2: Install VS Code -->
+      <div class="section" id="install-vscode">
+        <h2>Step 2 &mdash; Install VS Code</h2>
+        <p>VS Code (Visual Studio Code) is a code editor. This is where you'll type all your code. It's free, fast, and the most popular editor in the world. It has features like auto-complete (it guesses what you're about to type), syntax highlighting (colors your code to make it easier to read), and extensions (extra tools you can add).</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Go to code.visualstudio.com</h4>
+            <p>Open your browser and visit <a href="https://code.visualstudio.com" target="_blank">https://code.visualstudio.com</a>. Click the big download button for your operating system.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Install and open</h4>
+            <p>Run the installer. Again, the defaults are fine. Just click through the installation. When it's done, open VS Code.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Install the extension</h4>
+            <p>VS Code has extensions that add features. We want one that gives us handy code shortcuts for React Native.</p>
+            <p>Press <strong>Ctrl+Shift+X</strong> (or <strong>Cmd+Shift+X</strong> on Mac) to open the Extensions panel. Search for <strong>"ES7+ React/Redux/React-Native snippets"</strong> by <em>dsznajder</em>. Click <strong>Install</strong>.</p>
+            <p>This extension gives you shortcuts like typing <code>rnfs</code> and pressing Tab to automatically create a React Native component file. You don't need to use this now, but it'll be very helpful later.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#10004; Tip</div>
+          <p>When you're ready to open your project, just open VS Code, go to <strong>File &rarr; Open Folder</strong>, and select your project folder. We'll do this in a later step.</p>
+        </div>
+      </div>
+
+      <!-- Step 3: Install Expo Go -->
+      <div class="section" id="install-expo-go">
+        <h2>Step 3 &mdash; Install Expo Go on Your Phone</h2>
+        <p>Expo Go is a free app that lets you preview your code on a real phone. Instead of waiting for a long build process, you write code, save it, and instantly see the result on your phone. It's like a live preview button, but on your actual device.</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>iPhone users</h4>
+            <p>Open the <strong>App Store</strong>, search for <strong>"Expo Go"</strong>, and tap Install. It's made by Expo and it's completely free.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Android users</h4>
+            <p>Open the <strong>Play Store</strong>, search for <strong>"Expo Go"</strong>, and tap Install. Same app, same free, same easy.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Don't open it yet</h4>
+            <p>Just install it and leave it. We'll use it in Step 5 after we create our project. There's nothing to see in Expo Go until you have a project running.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">&#9888; Important</div>
+          <p>Your phone and computer must be connected to the <strong>same WiFi network</strong> for Expo Go to work. This is how they talk to each other. If you're at home, this is already the case. If you're on a university or work network, some block device-to-device communication. If preview doesn't work later, try using your phone's mobile hotspot instead.</p>
+        </div>
+      </div>
+
+      <!-- Step 4: Create Your First Project -->
+      <div class="section" id="create-project">
+        <h2>Step 4 &mdash; Create Your First Project</h2>
+        <p>This is where the magic starts. We're going to create a brand new project folder with everything set up and ready to go.</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Open your terminal</h4>
+            <p>On Windows, open <strong>PowerShell</strong> or <strong>Command Prompt</strong>. On Mac, open <strong>Terminal</strong>. You can find these by searching in your start menu or spotlight.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Navigate to your Desktop</h4>
+            <p>Let's create our project on the Desktop so it's easy to find. Type this command and press Enter:</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">cd ~/Desktop</code></pre>
+        </div>
+
+        <p>This command means "change directory to my Desktop." <code>cd</code> stands for "change directory" and <code>~</code> means "my home folder." On Windows Command Prompt, you might need to type <code>cd %USERPROFILE%\Desktop</code> instead.</p>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Create the project</h4>
+            <p>Run these three commands one at a time. Copy each line, paste it into your terminal, and press Enter:</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">Terminal</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-bash">npx create-expo-app@latest LinkSpice
+cd LinkSpice
+npm start</code></pre>
+        </div>
+
+        <p>Let's break down what each command does:</p>
+
+        <ul>
+          <li><strong><code>npx create-expo-app@latest LinkSpice</code></strong> &mdash; This downloads and runs the Expo project creator. It builds a brand new project folder called "LinkSpice" with all the starter files you need. The <code>@latest</code> part means it always gets the newest version.</li>
+          <li><strong><code>cd LinkSpice</code></strong> &mdash; This moves you inside the LinkSpice folder. All your future commands should be run from inside this folder.</li>
+          <li><strong><code>npm start</code></strong> &mdash; This starts the development server. It watches your code files and serves your app so it can be previewed on your phone. A big QR code should appear in your terminal.</li>
+        </ul>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#9889; Why this matters</div>
+          <p>The <code>npm start</code> command is one you'll use constantly. Whenever you want to preview your app, open a terminal, go to your LinkSpice folder, and run <code>npm start</code>. It's like turning on the power to your workshop.</p>
+        </div>
+      </div>
+
+      <!-- Step 5: Run on Your Phone -->
+      <div class="section" id="run-on-phone">
+        <h2>Step 5 &mdash; Run on Your Phone</h2>
+        <p>Now that your project is running, let's see it on your actual phone. This is the exciting part!</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Look at your terminal</h4>
+            <p>You should see a QR code and a URL that looks something like <code>exp://192.168.1.5:8081</code>. This is your app's address on your local network.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Scan the QR code</h4>
+            <p>Open the <strong>Expo Go</strong> app on your phone. If you're on iPhone, use your Camera app to scan the QR code. If you're on Android, use the built-in scanner in Expo Go. The app will load automatically.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>You should see the welcome screen</h4>
+            <p>After a few seconds of loading, your phone should show a screen that says <strong>"Welcome to Expo"</strong> with the Expo logo. This means everything is working!</p>
+          </div>
+        </div>
+
+        <div class="callout callout-error">
+          <div class="callout-title">&#10060; If it doesn't work</div>
+          <p>Make sure your phone and computer are on the same WiFi. If it still fails, try turning off VPN on either device. If you're still stuck, close the terminal, run <code>npm start</code> again, and try once more.</p>
+        </div>
+      </div>
+
+      <!-- The Code -->
+      <div class="section" id="app-code">
+        <h2>Understanding the Code</h2>
+        <p>Let's look at the actual code that makes your app work. In VS Code, open your LinkSpice folder (File &rarr; Open Folder) and find the file called <code>App.js</code>. This is the main file of your app. Open it and you'll see something like this:</p>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">App.js</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-javascript">import { Text, View, StyleSheet } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text&gt;Hello LinkSpice!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});</code></pre>
+        </div>
+
+        <p>Let's understand every line:</p>
+
+        <ul>
+          <li><strong><code>import &#123; Text, View, StyleSheet &#125; from 'react-native';</code></strong> &mdash; This brings in tools we need. <code>Text</code> lets us display words on screen. <code>View</code> is like a container (like a box). <code>StyleSheet</code> lets us add styles like colors and sizes.</li>
+          <li><strong><code>export default function App() &#123; &#125;</code></strong> &mdash; This defines our main component. A component is a piece of the app. Every React Native app is made of components. The <code>App</code> component is the root &mdash; it's the first thing that runs.</li>
+          <li><strong><code>&lt;View style=&#123;styles.container&#125;&gt;</code></strong> &mdash; This creates a View (a box) that fills the whole screen. The <code>style</code> part applies our container styles.</li>
+          <li><strong><code>&lt;Text&gt;Hello LinkSpice!&lt;/Text&gt;</code></strong> &mdash; This displays the text "Hello LinkSpice!" on the screen. This is what you see on your phone right now.</li>
+          <li><strong><code>const styles = StyleSheet.create(&#123; &#125;);</code></strong> &mdash; This defines the styles. <code>flex: 1</code> means "fill all available space." <code>alignItems: 'center'</code> centers horizontally. <code>justifyContent: 'center'</code> centers vertically.</li>
+        </ul>
+
+        <div class="callout callout-why">
+          <div class="callout-title">&#9889; Why this matters</div>
+          <p>Every screen in your app is made of components like this one. Components are reusable building blocks. Later, you'll create components for buttons, cards, input fields, and entire screens. This simple App component is the foundation of everything you'll build.</p>
+        </div>
+      </div>
+
+      <!-- Step 6: Change the Text -->
+      <div class="section" id="change-text">
+        <h2>Step 6 &mdash; Change the Text</h2>
+        <p>The best way to learn is by doing. Let's make a change and watch it happen on your phone in real time.</p>
+
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Open App.js in VS Code</h4>
+            <p>In VS Code, open your LinkSpice folder if you haven't already. Find <code>App.js</code> in the file list on the left and click to open it.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Change the text</h4>
+            <p>Find the line that says <code>&lt;Text&gt;Hello LinkSpice!&lt;/Text&gt;</code>. Change it to your name:</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-filename">App.js</span>
+            <button class="copy-btn">&#128203; Copy</button>
+          </div>
+          <pre><code class="language-javascript">import { Text, View, StyleSheet } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text&gt;Hello, my name is Abdul!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});</code></pre>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Save the file</h4>
+            <p>Press <strong>Ctrl+S</strong> (or <strong>Cmd+S</strong> on Mac) to save. Look at your phone &mdash; it should automatically update with your new text! No need to restart anything. This is called <strong>hot reloading</strong>, and it makes development super fast.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">&#10004; Tip</div>
+          <p>Hot reloading is one of the best things about Expo. Every time you save a file, your phone updates instantly. You can experiment and see results immediately. Never be afraid to try things &mdash; you can always undo changes.</p>
+        </div>
+      </div>
+
+      <!-- Verify -->
+      <div class="verify">
+        <div class="verify-title">&#10004; What You Should See</div>
+        <p>After completing all the steps above, your phone should show:</p>
+        <ul>
+          <li>A white (or dark) screen with your name displayed in the center</li>
+          <li>If you changed the text and saved, the new text appears instantly</li>
+          <li>The terminal is still running (don't close it while you're working)</li>
+        </ul>
+        <p>If you see your name on the screen, congratulations &mdash; you just wrote and ran your first mobile app!</p>
+      </div>
+
+      <!-- Exercise -->
+      <div class="exercise">
+        <div class="exercise-title">&#128187; Exercise &mdash; Try It Yourself</div>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Now it's your turn to make some changes. This is the best way to learn. Don't be afraid to experiment!</p>
+        <ol>
+          <li><strong>Change the background color to blue.</strong> Inside the <code>container</code> style, add <code>backgroundColor: '#2196F3'</code>. Save the file and watch your phone turn blue!</li>
+          <li><strong>Add a second Text element below the first one.</strong> Copy the <code>&lt;Text&gt;...&lt;/Text&gt;</code> line and paste it right below. Change the text to something different. Save and see two lines of text on your phone.</li>
+        </ol>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">&#10004; Stuck? Here's what the exercise should look like:</div>
+        <p>Your <code>App.js</code> after the exercise should look something like this:</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-header">
+          <span class="code-block-filename">App.js &mdash; After Exercise</span>
+          <button class="copy-btn">&#128203; Copy</button>
+        </div>
+        <pre><code class="language-javascript">import { Text, View, StyleSheet } from 'react-native';
+
+export default function App() {
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text&gt;Hello, my name is Abdul!&lt;/Text&gt;
+      &lt;Text&gt;I'm learning to code with LinkSpice&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2196F3',
+  },
+});</code></pre>
+      </div>
+
+      <!-- Chapter Navigation -->
+      <div class="chapter-nav">
+        <div></div>
+        <a href="02-structure.html" class="next">
+          <span class="nav-label">Next Chapter &rarr;</span>
+          <span class="nav-title">Chapter 2 &mdash; Project Structure</span>
+        </a>
+      </div>
+
+      <!-- Mark Complete -->
+      <button id="mark-complete" data-chapter="1" class="copy-btn" style="margin-top:24px;padding:12px 24px;font-size:14px;">Mark Chapter Complete</button>
+
+    </main>
+  </div>
+
+  <!-- Prism.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+
+  <!-- Main JS -->
+  <script src="../js/main.js"></script>
+</body>
+</html>
