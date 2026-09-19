@@ -32,7 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_links_created_at ON links(created_at);
 CREATE INDEX IF NOT EXISTS idx_links_is_pinned ON links(is_pinned);
 `;
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export function migrate(db: DbClient): void {
   db.exec('PRAGMA foreign_keys = ON;');

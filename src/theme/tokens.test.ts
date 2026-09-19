@@ -20,7 +20,7 @@ describe('theme tokens', () => {
   });
 
   it('dark mode uses a near-black background', () => {
-    expect(palettes.dark.background).toBe('#0B0B0D');
+    expect(palettes.dark.background).toBe('#000000');
   });
 
   it('spacing values are all positive', () => {

@@ -14,7 +14,6 @@
     },
     "android": {
       "package": "com.linkspace.app",
-      "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "backgroundColor": "#0B0B0D",
         "foregroundImage": "./assets/android-icon-foreground.png",

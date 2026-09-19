@@ -6,6 +6,7 @@ import { createSpace } from './spaces';
 import {
   createLink,
   deleteLink,
+  faviconsBySpace,
   findByUrl,
   getLink,
   linkCountBySpace,
@@ -169,5 +170,28 @@ describe('links repository', () => {
     const recent = listRecent(db, 10);
     expect(recent).toHaveLength(10);
     expect(recent[0].title).toBe('Link 25');
+  });
+
+  it('collects up to three favicons per space', () => {
+    const work = createSpace(db, { name: 'Work' });
+    const fun = createSpace(db, { name: 'Fun' });
+    for (let i = 1; i <= 5; i += 1) {
+      createLink(db, {
+        url: `https://w${i}.dev/x`,
+        title: `w${i}`,
+        spaceId: work.id,
+        favicon: `https://w${i}.dev/icon.png`,
+      });
+    }
+    createLink(db, {
+      url: 'https://f1.dev/x',
+      title: 'f1',
+      spaceId: fun.id,
+      favicon: 'https://f1.dev/icon.png',
+    });
+
+    const favicons = faviconsBySpace(db);
+    expect(favicons[work.id]).toHaveLength(3);
+    expect(favicons[fun.id]).toEqual(['https://f1.dev/icon.png']);
   });
 });

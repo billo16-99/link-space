@@ -179,3 +179,55 @@ export function linkCountBySpace(db: DbClient, spaceId: string | null): number {
   );
   return row?.n ?? 0;
 }
+
+export function faviconsBySpace(db: DbClient, maxPerSpace = 3): Record<string, string[]> {
+  const rows = db.all<{ space_id: string; favicon: string }>(
+    `SELECT space_id, favicon FROM links
+     WHERE space_id IS NOT NULL AND favicon IS NOT NULL
+     ORDER BY created_at DESC`
+  );
+  const result: Record<string, string[]> = {};
+  for (const row of rows) {
+    const list = result[row.space_id] ?? (result[row.space_id] = []);
+    if (list.length < maxPerSpace) {
+      list.push(row.favicon);
+    }
+  }
+  return result;
+}
+
+export interface LinkPreview {
+  url: string;
+  title: string;
+  favicon: string | null;
+}
+
+export function previewLinksBySpace(
+  db: DbClient,
+  maxPerSpace = 4
+): Record<string, LinkPreview[]> {
+  const rows = db.all<{ space_id: string; url: string; title: string; favicon: string | null }>(
+    `SELECT space_id, url, title, favicon FROM links
+     WHERE space_id IS NOT NULL
+     ORDER BY created_at DESC`
+  );
+  const result: Record<string, LinkPreview[]> = {};
+  for (const row of rows) {
+    const list = result[row.space_id] ?? (result[row.space_id] = []);
+    if (list.length < maxPerSpace) {
+      list.push({ url: row.url, title: row.title, favicon: row.favicon });
+    }
+  }
+  return result;
+}
+
+export function listLooseLinks(db: DbClient, limit = 20): Link[] {
+  const rows = db.all(
+    `SELECT ${CURRENTLY_SELECTED_COLUMNS} FROM links
+     WHERE space_id IS NULL
+     ORDER BY created_at DESC
+     LIMIT ?`,
+    [limit]
+  );
+  return rows.map((row) => mapLinkRow(row as never));
+}
